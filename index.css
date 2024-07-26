@@ -1,5 +1,31 @@
-.HTML {
-  padding: 0px;
-  border: 0px;
-  margin: 0px;
+* {
+    padding: 0px;
+    border: 0px;
+    margin: 0px;
+}
+
+
+
+#Principal {
+    height: auto;
+    width: auto;
+}
+
+
+#Header {
+    height: 70px;
+    max-width: 1600px;
+    background-color: rgb(10, 72, 114);
+    overflow: auto;
+}
+
+.paragrafoHeader {
+    color: rgb(231, 244, 255);
+   text-align: left;
+}
+
+#Corpo {
+    height: 830px;
+    width: 1600px;
+    background-color: rgb(255, 255, 255);
 }
