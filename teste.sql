@@ -11,7 +11,7 @@ CREATE TABLE Login(
 
 CREATE TABLE Produtos(
     Produto_ID int NOT NULL AUTO_INCREMENT,
-    NomeProduto varchar(100) NOT NULL,
+    NomeProduto varchar(100) NOT NULL UNIQUE,
     CategoriaProduto varchar(50) NOT NULL,
     QuantidadeProduto int NOT NULL,
     PRIMARY KEY (Produto_ID)

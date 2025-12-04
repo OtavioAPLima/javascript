@@ -17,23 +17,47 @@
 
         <div id="Corpo">
             <div id="Principal">
-                <form id="Pesquisa" onsubmit="pesquisa(event)">
-                    <label for="Produto_ID">Produto ID:</label>
-                    <input type="number" class="Forms" id="Produto_ID" name="Produto_ID">
-                    <label for="NomeProduto"> Nome do Produto:</label>
-                    <input type="text" class="Forms" id="NomeProduto" name="NomeProduto">
-                    <label for="CategoriaProduto"> Categoria:</label>
-                    <input type="text" class="Forms" id="CategoriaProduto" name="CategoriaProduto">
-                    <label for="QuantidadeProduto"> Quantidade:</label>
-                    <input type="number" class="Forms" id="QuantidadeProduto" name="QuantidadeProduto">
-                    <input type="submit" value="CadastrarProdutos">
-                    <input type="submit" value="ConsultarProdutos">
-                </form>
+                <div id="menuUsuario">
+                    <button class="botão" onclick="pesquisar()">Pesquisar produtos</button>
+                    <buttonv class="botão" onclick="cadastrar()">Cadastrar produtos</button>
+
+                    <form id="PesquisaForm" onsubmit="pesquisa(event)">
+                        <label for="Produto_ID">Produto ID:</label>
+                        <input type="number" class="Forms" name="Produto_ID">
+                        <label for="NomeProduto"> Nome do Produto:</label>
+                        <input type="text" class="Forms" name="NomeProduto">
+                        <label for="CategoriaProduto"> Categoria:</label>
+                        <input type="text" class="Forms" name="CategoriaProduto">
+                        <input type="submit" class="inputForm" value="Consultar Produtos">
+                    </form>
+
+                    <form id="CadastrarProdutosForm" onsubmit="pesquisa(event)">
+                        <label for="Produto_ID">Produto ID:</label>
+                        <input type="number" class="Forms" name="Produto_ID">
+                        <label for="NomeProduto"> Nome do Produto:</label>
+                        <input type="text" class="Forms" name="NomeProduto">
+                        <label for="CategoriaProduto"> Categoria:</label>
+                        <input type="text" class="Forms" name="CategoriaProduto">
+                        <label for="QuantidadeProduto"> Quantidade:</label>
+                        <input type="number" class="Forms" name="QuantidadeProduto">
+                        <input type="submit" class="inputForm" value="Cadastrar Produtos">
+                    </form>
+                </div>
 
                 <script>
                     function pesquisa(event) {
                         event.preventDefault();
-                        // Sua lógica de pesquisa aqui
+                        
+                    }
+                    document.getElementById('PesquisaForm').style.display = 'none';
+                    document.getElementById('CadastrarProdutosForm').style.display = 'none';
+                    function pesquisar() {
+                        document.getElementById('PesquisaForm').style.display = 'block';
+                        document.getElementById('CadastrarProdutosForm').style.display = 'none';
+                    }
+                    function cadastrar() {
+                        document.getElementById('PesquisaForm').style.display = 'none';
+                        document.getElementById('CadastrarProdutosForm').style.display = 'block';
                     }
                 </script>
                 
@@ -44,8 +68,8 @@
         </div>
 
     </div>
-</Principal>
+</div>
 
 </body>
 
-</HMTL>
+</html>

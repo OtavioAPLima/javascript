@@ -31,7 +31,7 @@ $result = $smtm->get_result();
 if ($result->num_rows == 1) {
     $smtm->close();
     $conn->close();
-    header("Location: consultaProdutos.html");
+    header("Location: menuUsuario.html");
 } else {
     $smtm->close();
     $conn->close();
