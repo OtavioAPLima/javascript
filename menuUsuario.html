@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <TITLE>Projeto JavaScript</TITLE>
+  <META CHARSET="utf-8">
+  <link rel="stylesheet" href="menuUsuario.css">
+  <link rel="stylesheet" href="geral.css">
+</head>
+
+<body>
+    <div id="Principal">
+
+        <div id="Header">
+            <p class="paragrafoHeader" id="nomeFuncao">Consulta de preço</p>
+        </div>
+
+        <div id="Corpo">
+            <div id="Principal">
+                <form id="Pesquisa" onsubmit="pesquisa(event)">
+                    <label for="Produto_ID">Produto ID:</label>
+                    <input type="number" class="Forms" id="Produto_ID" name="Produto_ID">
+                    <label for="NomeProduto"> Nome do Produto:</label>
+                    <input type="text" class="Forms" id="NomeProduto" name="NomeProduto">
+                    <label for="CategoriaProduto"> Categoria:</label>
+                    <input type="text" class="Forms" id="CategoriaProduto" name="CategoriaProduto">
+                    <label for="QuantidadeProduto"> Quantidade:</label>
+                    <input type="number" class="Forms" id="QuantidadeProduto" name="QuantidadeProduto">
+                    <input type="submit" value="CadastrarProdutos">
+                    <input type="submit" value="ConsultarProdutos">
+                </form>
+
+                <script>
+                    function pesquisa(event) {
+                        event.preventDefault();
+                        // Sua lógica de pesquisa aqui
+                    }
+                </script>
+                
+            </div>
+        </div>
+        
+        <div id="Footer">
+        </div>
+
+    </div>
+</Principal>
+
+</body>
+
+</HMTL>

@@ -1,35 +1,3 @@
-* {
-    padding: 0px;
-    border: 0px;
-    margin: 0px;
-}
-
-
-
-#Principal {
-    height: auto;
-    width: auto;
-}
-
-
-#Header {
-    height: 70px;
-    max-width: 100%;
-    background-color: rgb(10, 72, 114);
-    overflow: auto;
-}
-
-.paragrafoHeader {
-    color: rgb(231, 244, 255);
-   text-align: left;
-}
-
-#Corpo {
-    height: 100%;
-    width: 100%;
-    background-color: rgb(255, 255, 255);
-}
-
 .Login {
     height: 300px;
     width: 300px;
