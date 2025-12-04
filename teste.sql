@@ -5,8 +5,9 @@ CREATE TABLE Login(
     Login_ID int NOT NULL AUTO_INCREMENT,
     Usuario varchar(50),
     Senha varchar(50),
-    E-mail varchar(100),
+    Email varchar(100),
     PRIMARY KEY (Login_ID)
 );
 
-INSERT INTO Login( Usuario, Senha, E-mail)
+INSERT INTO Login (Usuario, Senha, Email) VALUES
+('pessoa1', 'senha1', 'email@email.com');    
