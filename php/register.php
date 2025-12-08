@@ -12,6 +12,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// Verificar dados
 if (!isset($_POST["Usuario"]) || !isset($_POST["Senha"]) || !isset($_POST["Senha2"]) || !isset($_POST["Email"]) || empty($_POST["Usuario"]) || empty($_POST["Senha"]) || empty($_POST["Senha2"]) || empty($_POST["Email"])) {
     die("Dados não enviados.");
 }
@@ -27,31 +28,31 @@ if ($Senha !== $Senha2) {
 }
 
  // Verificar se o usuário já existe
-$smtm = $conn->prepare("SELECT * FROM Login WHERE Usuario=?");
-$smtm->bind_param("s", $Usuario);
-$smtm->execute();
-$result = $smtm->get_result();
+$stmt = $conn->prepare("SELECT * FROM Login WHERE Usuario=?");
+$stmt->bind_param("s", $Usuario);
+$stmt->execute();
+$result = $stmt->get_result();
 
 if ($result->num_rows > 0) {
     $erro = "Usuário já existe.";
     die;
 }
 
-$smtm->close();
+$stmt->close();
 
 // Inserir novo usuário
-$smtm = $conn->prepare("INSERT INTO Login (Usuario, Senha, Email) VALUES (?, ?, ?)");
-$smtm->bind_param("sss", $Usuario, $Senha, $Email);
+$stmt = $conn->prepare("INSERT INTO Login (Usuario, Senha, Email) VALUES (?, ?, ?)");
+$stmt->bind_param("sss", $Usuario, $Senha, $Email);
 
-if ($smtm->execute()) {
-    $smtm->close();
+if ($stmt->execute()) {
+    $stmt->close();
     $conn->close();
-    header("Location: index.html");
+    header("Location: /html/index.html");
     exit;
 } else {
-    $smtm->close();
+    $stmt->close();
     $conn->close();
-    header("Location: register.html");
+    header("Location: /html/register.html");
     exit;
 }
 ?>

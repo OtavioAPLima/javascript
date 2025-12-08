@@ -22,20 +22,21 @@ if (!isset($_POST["Usuario"]) || !isset($_POST["Senha"]) || empty($_POST["Usuari
 $Usuario = $_POST["Usuario"];
 $Senha = $_POST["Senha"];
 
-$smtm = $conn->prepare("SELECT Usuario, Senha FROM Login WHERE Usuario=? AND Senha=?");
-$smtm->bind_param("ss", $Usuario, $Senha);
-$smtm->execute();
-$result = $smtm->get_result();
+// Preparar e query
+$stmt = $conn->prepare("SELECT Usuario, Senha FROM Login WHERE Usuario=? AND Senha=?");
+$stmt->bind_param("ss", $Usuario, $Senha);
+$stmt->execute();
+$result = $stmt->get_result();
 
 //login
 if ($result->num_rows == 1) {
-    $smtm->close();
+    $stmt->close();
     $conn->close();
-    header("Location: menuUsuario.html");
+    header("Location: /html/menuUsuario.html");
 } else {
-    $smtm->close();
+    $stmt->close();
     $conn->close();
-    header("Location: index.html?erro=1");
+    header("Location: /html/index.html?erro=1");
     exit;
 }
 ?>

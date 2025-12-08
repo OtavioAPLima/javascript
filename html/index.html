@@ -4,8 +4,8 @@
 <head>
   <TITLE>Projeto JavaScript</TITLE>
   <META CHARSET="utf-8">
-  <link rel="stylesheet" href="index.css">
-    <link rel="stylesheet" href="geral.css">
+  <link rel="stylesheet" href="../css/geral.css">
+  <link rel="stylesheet" href="../css/index.css">
 </head>
 
 <body>
@@ -17,17 +17,14 @@
 
         <div id="Corpo">
             <div class="Login">
-                <form action="/register.php" method="POST">
+                <form action="../php/login.php" method="POST">
                     <label for="Usuario">Usuário:</label><br>
                     <input type="text" class="Forms" id="Usuario" name="Usuario"><br>
                     <label for="Senha">Senha:</label><br>
                     <input type="password" class="Forms" id="Senha" name="Senha"><br>
-                    <label for="Senha2">Confirmar senha:</label><br>
-                    <input type="password" class="Forms" id="Senha2" name="Senha2"><br>
-                    <label for="Email">E-mail:</label><br>
-                    <input type="email" class="Forms" id="Email" name="Email"><br>
                     <input type="submit" value="Submit">
                 </form>
+                <button onclick="document.location='register.html'"> Registro</button>
             </div>
         </div>
         
@@ -36,6 +33,16 @@
 
     </div>
 </div>
+
+<!-- erro de login -->
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('erro') === '1') {
+        alert('Usuário ou senha incorretos!');
+        
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+</script>
 
 </body>
 

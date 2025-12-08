@@ -14,12 +14,13 @@ CREATE TABLE Produtos(
     NomeProduto varchar(100) NOT NULL UNIQUE,
     CategoriaProduto varchar(50) NOT NULL,
     QuantidadeProduto int NOT NULL,
+    PrecoProduto float(5,2) NOT NULL,
     PRIMARY KEY (Produto_ID)
 );
 
 INSERT INTO Login (Usuario, Senha, Email) VALUES
 ('pessoa1', 'senha1', 'email@email.com');    
 
-INSERT INTO Produtos (NomeProduto, CategoriaProduto, QuantidadeProduto) VALUES
-('ProdutoA', 'AAA', 10),
-('ProdutoB', 'BBB', 20);
+INSERT INTO Produtos (NomeProduto, CategoriaProduto, QuantidadeProduto, PrecoProduto) VALUES
+('ProdutoA', 'AAA', 10, 12.50),
+('ProdutoB', 'BBB', 20, 15.00);
