@@ -1,32 +1,14 @@
 #PesquisaForm {
     display: none;
-
-}
-
-.Forms {
-    border: 1px;
-    border-color: black;
-    border-style: solid;
-}
-
-#menuUsuario {
-    height: fit-content;
-    max-width: fit-content;
-    background-color: rgba(220, 220, 220, 0.515);
-    margin: auto;
-    padding-top: 50px;
-    text-align: center;
-}
-
-#PesquisaForm {
     margin: 20px auto;
     width: fit-content;
     text-align: center;
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    align-items: flex-end;
+    align-items: center;
     justify-content: center;
+
 }
 
 #PesquisaForm > div {
@@ -40,6 +22,24 @@
     margin-bottom: 5px;
 }
 
+.Forms {
+    border: 1px;
+    border-color: black;
+    border-style: solid;
+}
+
+#menuUsuario {
+    position: relative;
+    display: block;
+    height: fit-content;
+    max-width: fit-content;
+    background-color: rgba(220, 220, 220, 0.515);
+    margin: 20px auto;
+    padding: 10px;
+    text-align: center;
+}
+
+
 #PesquisaForm input[type="number"],
 #PesquisaForm input[type="text"] {
     display: block;
@@ -51,8 +51,8 @@
 
 #resultados {
     margin: 20px auto 0;
-    width: fit-content;
     overflow: auto;
+    padding-bottom: 10px;
 }
 
 .inputForm {
@@ -77,7 +77,7 @@
 table, th, td {
   border: 1px solid black;
   border-collapse: collapse;
-  padding: 2px;
+  padding: 5px;
 }
 
 .alterarTabela {
@@ -86,6 +86,5 @@ table, th, td {
 
 #botaoForms {
     display: none;
-    width: fit-content;
-    margin-top: 10px;
+    padding: 5px;
 }

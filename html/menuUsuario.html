@@ -1,28 +1,28 @@
 <!DOCTYPE HTML>
 <html>
 
-<head>
-  <TITLE>Projeto JavaScript</TITLE>
-  <META CHARSET="utf-8">
-  <link rel="stylesheet" href="../css/menuUsuario.css">
-  <link rel="stylesheet" href="../css/geral.css">
-</head>
+    <head>
+        <TITLE>Projeto JavaScript</TITLE>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../css/menuUsuario.css">
+        <link rel="stylesheet" href="../css/geral.css">
+    </head>
 
-<body>
-    <div id="Principal">
+    <body>
+        <div id="Principal">
 
-        <div id="Header">
-            <p class="paragrafoHeader" id="nomeFuncao">Consulta de preço</p>
-        </div>
+            <div id="Header">
+                <p class="paragrafoHeader" id="nomeFuncao">Consulta de preço</p>
+            </div>
 
-        <div id="Corpo">
-            <div id="Principal">
+            <div id="Corpo">
                 <div id="menuUsuario">
                     <!--Abrir menu de pesquisa-->
                     <button class="botao" onclick="pesquisar()">Pesquisar produtos</button>
                     <!--Abrir menu de cadastro-->
                     <button class="botao" onclick="cadastrar()">Cadastrar produtos</button><br>
-                    
+
 
                     <!--Formulário de pesquisa/cadastro-->
                     <form action="../php/menuUsuario.php" id="PesquisaForm" onsubmit="naoEnviar(event)">
@@ -61,25 +61,18 @@
                             </tr>
                             <tbody id="resultadosTabela">
                             </tbody>
-                                
+
                         </table>
                     </div>
                 </div>
+                <script src="../javaScript/menuUsuario.js"></script>
 
-                <script src="../javaScript/menuUsuario.js">
-                    
-
-                </script>
-                
             </div>
-        </div>
-        
-        <div id="Footer">
+
+            </div>
+            <div id="Footer">
         </div>
 
-    </div>
-</div>
-
-</body>
+    </body>
 
 </html>

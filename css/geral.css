@@ -2,6 +2,8 @@
     padding: 0px;
     border: 0px;
     margin: 0px;
+    font-size: 12px;
+    font-family: sans-serif;
 }
 
 
@@ -9,6 +11,7 @@
 #Principal {
     height: auto;
     width: auto;
+    align-items: center;
 }
 
 
@@ -27,4 +30,10 @@
     height: 100%;
     width: 100%;
     background-color: rgb(255, 255, 255);
+}
+@media screen and (min-width: 800px) {
+    #Corpo {
+        height: 100vh;
+    }
+    
 }

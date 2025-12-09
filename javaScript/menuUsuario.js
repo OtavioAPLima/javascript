@@ -3,6 +3,27 @@ let modoPesquisa = false;
 let modoCadastro = false;
 let modoAlterar = false;
 
+//Função para deixar o menu responsivo
+const resolucao = window.innerWidth;
+function responsivo() {
+    const larguraTela = window.innerWidth;
+    const botaoForms = document.getElementById('botaoForms');
+    const resultados = document.getElementById('resultados');
+    
+    if (larguraTela <= 768) {
+        if (botaoForms) botaoForms.style.fontSize = '120px';
+        if (resultados) resultados.style.fontSize = '120px';
+        
+    } else {
+        if (botaoForms) botaoForms.style.fontSize = '16px';
+        if (resultados) resultados.style.fontSize = '16px';
+        
+    }
+}
+
+
+
+
 //Enviar formulário sem atualizar a página
 function naoEnviar(event) {
     event.preventDefault();

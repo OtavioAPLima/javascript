@@ -2,10 +2,11 @@
 <html>
 
 <head>
-  <TITLE>Projeto JavaScript</TITLE>
-  <META CHARSET="utf-8">
-  <link rel="stylesheet" href="../css/geral.css">
-  <link rel="stylesheet" href="../css/index.css">
+    <TITLE>Projeto JavaScript</TITLE>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/geral.css">
+    <link rel="stylesheet" href="../css/index.css">
 </head>
 
 <body>
@@ -27,22 +28,19 @@
                 <button onclick="document.location='register.html'"> Registro</button>
             </div>
         </div>
-        
-        <div id="Footer">
-        </div>
-
     </div>
-</div>
+    <div id="Footer">
+    </div>
 
-<!-- erro de login -->
-<script>
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('erro') === '1') {
-        alert('Usuário ou senha incorretos!');
-        
-        window.history.replaceState({}, document.title, window.location.pathname);
-    }
-</script>
+    <!-- erro de login -->
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('erro') === '1') {
+            alert('Usuário ou senha incorretos!');
+            
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    </script>
 
 </body>
 
