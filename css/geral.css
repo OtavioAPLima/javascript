@@ -31,6 +31,7 @@
     width: 100%;
     background-color: rgb(255, 255, 255);
 }
+
 @media screen and (min-width: 800px) {
     #Corpo {
         height: 100vh;

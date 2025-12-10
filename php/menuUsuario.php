@@ -13,16 +13,38 @@ if ($conn->connect_error) {
 }
 
 $action = $_POST['action'];
-
 $Produto_ID = $_POST['Produto_ID'];
 $NomeProduto = $_POST['NomeProduto'];
 $QuantidadeProduto = $_POST['QuantidadeProduto'];       
 $CategoriaProduto = $_POST['CategoriaProduto'];
 $PrecoProduto = $_POST['PrecoProduto'];
 
+if (isset($_POST['action'])) {
+    $action = $_POST['action'];
+} else {
+    die("Ação não especificada.");
+}
+
+
+
+
 
 // Recebendo valor de ação e executando pesquisa, cadastro ou alteração
 switch($action) {
+    case 'exibirTodos':
+        $stmt = $conn->prepare("SELECT * FROM Produtos");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        header('Content-Type: application/json');
+        $produtos = [];
+        while($row = $result->fetch_assoc()) {
+            $produtos[] = $row;
+        }
+        echo json_encode($produtos);
+        
+        $stmt->close();
+        break;
     case 'pesquisar':
         if (empty($NomeProduto) && empty($CategoriaProduto)) {
             header('Content-Type: application/json');
@@ -53,14 +75,12 @@ switch($action) {
                 header("Content-Type: application/json");
                 echo json_encode(["sucessoCadastro" => "Produto cadastrado com sucesso."]);
                 $stmt->close();
-                $conn->close();
 
 
             } else {
                 header("Content-Type: application/json");
                 echo json_encode(["errorCadastro" => "Erro ao cadastrar produto: " . $stmt->error]);
                 $stmt->close();
-                $conn->close();
                 exit;
             }
         }
@@ -70,6 +90,7 @@ switch($action) {
         $stmt->bind_param("i", $Produto_ID);
         $stmt->execute();
         $result = $stmt->get_result();
+
         if (empty($Produto_ID) || empty($NomeProduto) || empty($QuantidadeProduto) || empty($CategoriaProduto) || empty($PrecoProduto)) {
             die("Todos os campos devem ser preenchidos para alterar um produto.");
         } else {
@@ -77,7 +98,6 @@ switch($action) {
                 header("Content-Type: application/json");
                 echo json_encode(["errorAlterar" => "Produto com ID $Produto_ID não encontrado."]);
                 $stmt->close();
-                $conn->close();
                 exit;
             }
             $stmt->close();
@@ -92,19 +112,38 @@ switch($action) {
                 header("Content-Type: application/json");
                 echo json_encode(["errorAlterar" => "Erro ao alterar produto: " . $stmt->error]);
                 $stmt->close();
-                $conn->close();
                 exit;
+                }
+            }
+        break;
+    case 'excluir':
+        $stmt = $conn->prepare("SELECT * FROM Produtos WHERE Produto_ID=?");
+        $stmt->bind_param("i", $Produto_ID);
+        $stmt->execute();
+
+        if (empty($Produto_ID)) {
+            header("Content-Type: application/json");
+            echo json_encode(["errorExcluir" => "Produto com ID $Produto_ID não encontrado."]);
+            $stmt->close();
+        } else {
+            if ($result->num_rows == 0) {
+                header("Content-Type: application/json");
+                echo json_encode(["errorExcluir" => "Produto com ID $Produto_ID não encontrado."]);
+                $stmt->close();
+            } else {
+                $stmt = $conn->prepare("DELETE FROM Produtos WHERE Produto_ID=?");
+                $stmt->bind_param("i", $Produto_ID);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                header("Content-Type: application/json");
+                echo json_encode(["sucessoExcluir" => "Produto excluído com sucesso."]);
+                $stmt->close();
             }
         }
+        break;
     default:
         die("Ação inválida.");  
         break;
 }
-
-
-
-
-
-
-
+$conn->close();
 ?>
