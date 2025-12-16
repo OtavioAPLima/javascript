@@ -22,12 +22,6 @@
     margin-bottom: 5px;
 }
 
-.Forms {
-    border: 1px;
-    border-color: black;
-    border-style: solid;
-}
-
 #menuUsuario {
     position: relative;
     display: block;
@@ -53,6 +47,11 @@
     margin: 20px auto 0;
     overflow: auto;
     padding-bottom: 10px;
+    text-align: center;
+}
+
+#resultados table {
+    margin: 0 auto;
 }
 
 .inputForm {

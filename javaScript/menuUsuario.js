@@ -1,9 +1,33 @@
-//Váriaveis de controle para o php
+// Váriaveis de controle para o php
 let modoPesquisa = false;
 let modoCadastro = false;
 let modoAlterar = false;
 let modoExcluir = false;
 
+// Set para categorias únicas
+const categoriasUnicas = new Set();
+
+// Limpar tabela
+const tabela = document.getElementById("resultadosTabela");
+tabela.innerHTML = '';
+
+// Logout do usuário
+function logout() {
+    fetch('/php/logout.php', {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        if (data.sucessoLogout) {
+            alert(data.sucessoLogout);
+            window.location.href = '/html/index.html'; // Redirecionar para a página de login
+        } else if (data.errorLogout) {
+            alert(data.errorLogout);
+        }
+    })
+    .catch(error => console.error('Erro:', error));
+}
 
 // Excluir produto
 function excluir(id) { 
@@ -35,7 +59,7 @@ function excluir(id) {
 
 
 
-//Função para exibir todas as tabelas ao carregar a página
+// Função para exibir todas as tabelas ao carregar a página
 function exibirTabelas() {
     let loadForm = new FormData();
     loadForm.append('action', 'exibirTodos');
@@ -47,21 +71,67 @@ function exibirTabelas() {
     .then(produtos => {
         console.log(produtos); 
         
-        // Exibir os produtos na página 
-        document.getElementById("resultadosTabela").innerHTML = '';
+        // Verificar se há erro de autenticação
+        if (produtos.erro && produtos.redirect) {
+            alert(produtos.erro);
+            window.location.href = produtos.redirect;
+            return;
+        }
+        
+        // Limpar tabela e preparar para exibir
+        const tabela = document.getElementById("resultadosTabela");
+        tabela.innerHTML = '';
         
         // Evitar categorias duplicadas
         const categoriasUnicas = new Set();
         
+        // Exibir os produtos na página 
         produtos.forEach(p => {
-            document.getElementById("resultadosTabela").innerHTML += `<tr class="alterarTabela" onclick="alterarTabela(this)" data-id="${p.Produto_ID}" data-nome="${p.NomeProduto}" data-categoria="${p.CategoriaProduto}" data-preco="${p.PrecoProduto}" data-quantidade="${p.QuantidadeProduto}"><td>${p.Produto_ID}</td> <td>${p.NomeProduto}</td> <td>${p.CategoriaProduto}</td> <td>R$ ${p.PrecoProduto}</td> <td>${p.QuantidadeProduto}</td></tr>`;
+            const tr = document.createElement('tr');
+
+            tr.className = 'alterarTabela';
+            tr.onclick = function() { alterarTabela(this); };
+
+            tr.dataset.id = p.Produto_ID;
+            tr.dataset.nome = p.NomeProduto;
+            tr.dataset.categoria = p.CategoriaProduto;
+            tr.dataset.preco = p.PrecoProduto;
+            tr.dataset.quantidade = p.QuantidadeProduto;
+
+            const tdId = document.createElement('td');
+            tdId.textContent = p.Produto_ID;
+            tr.appendChild(tdId);
+
+            const tdNome = document.createElement('td');
+            tdNome.textContent = p.NomeProduto;
+            tr.appendChild(tdNome);
+
+            const tdCategoria = document.createElement('td');
+            tdCategoria.textContent = p.CategoriaProduto;
+            tr.appendChild(tdCategoria);
+
+            const tdPreco = document.createElement('td');
+            tdPreco.textContent = `R$ ${p.PrecoProduto}`;
+            tr.appendChild(tdPreco);
+
+            const tdQuantidade = document.createElement('td');
+            tdQuantidade.textContent = p.QuantidadeProduto;
+            tr.appendChild(tdQuantidade);
+
+            tabela.appendChild(tr);
+            
+            
+            // Adicionar categoria ao set de categorias únicas
             categoriasUnicas.add(p.CategoriaProduto);
         });
         
         // Limpar e inserir o datalist com categorias únicas
-        document.getElementById('categorias').innerHTML = '';
+        const categoriaElement = document.getElementById("categorias");
+        categoriaElement.innerHTML = '';
         categoriasUnicas.forEach(categoria => {
-            document.getElementById('categorias').innerHTML += `<option value="${categoria}">`;
+            const option = document.createElement('option');
+            option.value = categoria;
+            categoriaElement.appendChild(option);
         });
         
         
@@ -94,15 +164,42 @@ function naoEnviar(event) {
             console.log(produtos); 
             
             // Exibir os produtos na página 
-            
-            document.getElementById("resultadosTabela").innerHTML = '';
+            tabela.innerHTML = '';
             produtos.forEach(p => {
-                document.getElementById("resultadosTabela").innerHTML += `<tr class="alterarTabela" onclick="alterarTabela(this)" data-id="${p.Produto_ID}" data-nome="${p.NomeProduto}" data-categoria="${p.CategoriaProduto}" data-preco="${p.PrecoProduto}" data-quantidade="${p.QuantidadeProduto}"><td>${p.Produto_ID}</td> <td>${p.NomeProduto}</td> <td>${p.CategoriaProduto}</td> <td>R$ ${p.PrecoProduto}</td> <td>${p.QuantidadeProduto}</td></tr>`;
+                const tr = document.createElement('tr');
+
+                tr.className = 'alterarTabela';
+                tr.onclick = function() { alterarTabela(this); };
+
+                tr.dataset.id = p.Produto_ID;
+                tr.dataset.nome = p.NomeProduto;
+                tr.dataset.categoria = p.CategoriaProduto;
+                tr.dataset.preco = p.PrecoProduto;
+                tr.dataset.quantidade = p.QuantidadeProduto;
+
+                const tdId = document.createElement('td');
+                tdId.textContent = p.Produto_ID;
+                tr.appendChild(tdId);
+
+                const tdNome = document.createElement('td');
+                tdNome.textContent = p.NomeProduto;
+                tr.appendChild(tdNome);
+
+                const tdCategoria = document.createElement('td');
+                tdCategoria.textContent = p.CategoriaProduto;
+                tr.appendChild(tdCategoria);
+
+                const tdPreco = document.createElement('td');
+                tdPreco.textContent = `R$ ${p.PrecoProduto}`;
+                tr.appendChild(tdPreco);
+
+                const tdQuantidade = document.createElement('td');
+                tdQuantidade.textContent = p.QuantidadeProduto;
+                tr.appendChild(tdQuantidade);
+
+                tabela.appendChild(tr);
             });
-        
-            
-            
-            
+         
         })
         .catch(error => console.error('Erro:', error));
     }
@@ -143,6 +240,7 @@ function naoEnviar(event) {
             
             if (produtos.sucessoAlterar) {
                 alert(produtos.sucessoAlterar);
+                   
             } else if (produtos.errorAlterar) {
                 alert(produtos.errorAlterar);
             }
@@ -208,13 +306,23 @@ function alterarTabela(linha) {
     const categoria = linha.dataset.categoria;
     const preco = linha.dataset.preco;
     const quantidade = linha.dataset.quantidade;
-    
+
+    const resultadosTabela = document.getElementById("resultadosTabela");
+    const tr = document.createElement('tr');
+
+    for (const td of linha.children) {
+        const novaTd = document.createElement('td');
+        novaTd.textContent = td.textContent;
+        tr.appendChild(novaTd);
+    }
+
     //Verificar valores
     console.log('ID:', id, 'Nome:', nome, 'Categoria:', categoria, 'Preço:', preco, 'Quantidade:', quantidade);
     
     // Preencher formulário com os valores
-    document.getElementById("resultadosTabela").innerHTML = '';
-    document.getElementById("resultadosTabela").innerHTML += `<tr class="alterarTabela"><td>${id}</td> <td>${nome}</td> <td>${categoria}</td> <td>R$ ${preco}</td> <td>${quantidade}</td> <td onclick="excluir(${id})"><p>Excluir</p></td> </tr>`;
+    resultadosTabela.innerHTML = '';
+    resultadosTabela.appendChild(tr);
+
     document.getElementById('Produto_ID_Input').value = id;
     document.querySelector('input[name="NomeProduto"]').value = nome;
     document.querySelector('input[name="CategoriaProduto"]').value = categoria;

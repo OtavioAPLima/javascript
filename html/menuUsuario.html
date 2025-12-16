@@ -14,6 +14,7 @@
 
             <div id="Header">
                 <p class="paragrafoHeader" id="nomeFuncao">Consulta de preço</p>
+                <button class="botaoHeader" onclick="logout()">Logout</button>
             </div>
 
             <div id="Corpo">
@@ -27,26 +28,26 @@
                     <!--Formulário de pesquisa/cadastro-->
                     <form action="../php/menuUsuario.php" id="PesquisaForm" onsubmit="naoEnviar(event)">
                         <div id="Produto_ID_Div">
-                            <label for="Produto_ID">Produto ID:</label>
+                            <label for="Produto_ID_Input">Produto ID:</label>
                             <input type="number" id="Produto_ID_Input" class="Forms" name="Produto_ID" placeholder="ID">
                         </div>
                         <div>
                             <label for="NomeProduto">Nome do Produto:</label>
-                            <input type="text" class="Forms" name="NomeProduto" placeholder="Nome do Produto">
+                            <input type="text" id="NomeProduto" class="Forms" name="NomeProduto" placeholder="Nome do Produto">
                         </div>
                         <div>
                             <label for="CategoriaProduto">Categoria:</label>
-                            <input list="categorias" class="Forms" name="CategoriaProduto" placeholder="Categoria">
+                            <input list="categorias" id="CategoriaProduto" class="Forms" name="CategoriaProduto" placeholder="Categoria">
                             <datalist id="categorias">
 
                             </datalist>
                         </div>
                         <div>
                             <label for="PrecoProduto">Preço:</label>
-                            <input type="text" class="Forms" name="PrecoProduto" placeholder="Preço">
+                            <input type="text" id="PrecoProduto" class="Forms" name="PrecoProduto" placeholder="Preço">
                         </div>
                         <div id="Quantidade_Produto_Div">
-                            <label for="QuantidadeProduto">Quantidade:</label>
+                            <label for="Quantidade_Produto_Input">Quantidade:</label>
                             <input type="number" id="Quantidade_Produto_Input" class="Forms" name="QuantidadeProduto">
                         </div><br>
                         <input type="submit" id="botaoForms" class="inputForm" value="Consultar Produtos">

@@ -19,13 +19,18 @@
         <div id="Corpo">
             <div class="Login">
                 <form action="../php/login.php" method="POST">
+
                     <label for="Usuario">Usuário:</label><br>
                     <input type="text" class="Forms" id="Usuario" name="Usuario" placeholder="Usuario"><br>
+                
                     <label for="Senha">Senha:</label><br>
                     <input type="password" class="Forms" id="Senha" name="Senha" placeholder="12345678"><br>
-                    <input type="submit" value="Submit">
+
+                    <a href="recuperarSenha.html">Esqueceu a senha?</a><br><br>
+
+                    <input type="submit" value="Enviar">
                 </form>
-                <button onclick="document.location='register.html'"> Registro</button>
+                <button onclick="document.location='register.html'" id="registro"> Registro</button>
             </div>
         </div>
     </div>
@@ -37,7 +42,10 @@
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('erro') === '1') {
             alert('Usuário ou senha incorretos!');
+            window.history.replaceState({}, document.title, window.location.pathname);
             
+        } else if (urlParams.get('erro') === '2') {
+            alert('Por favor, preencha todos os campos!');
             window.history.replaceState({}, document.title, window.location.pathname);
         }
     </script>

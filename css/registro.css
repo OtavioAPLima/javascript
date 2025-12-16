@@ -2,12 +2,16 @@
     height: 300px;
     width: 300px;
     background-color: rgb(197, 197, 197);
-    margin: auto;
+    margin: 100px auto;
+    padding: 10px;
+    border-radius: 10px;
 
 }
 
 .Forms {
-    border: 1px;
-    border-color: black;
-    border-style: solid;
+    margin-bottom: 10px;
+}
+
+#login {
+    margin-top: 20px;
 }

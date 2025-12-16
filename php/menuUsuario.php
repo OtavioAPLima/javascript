@@ -1,4 +1,11 @@
 <?php
+// Verificar sessão ANTES de qualquer output
+session_start();
+if (!isset($_SESSION['Usuario'])) {
+    header('Content-Type: application/json');
+    echo json_encode(["erro" => "Sessão expirada ou usuário não autenticado.", "redirect" => "/html/index.html"]);
+    exit;
+}
 
 $servername = "127.0.0.1";
 $username = "root";
@@ -9,21 +16,27 @@ $port = 3306;
 $conn = new mysqli($servername, $username, $password, $dbname, $port);
 
 if ($conn->connect_error) {
-    die("Erro de conexão: " . $conn->connect_error);
+    header('Content-Type: application/json');
+    echo json_encode(["erro" => "Erro de conexão: " . $conn->connect_error]);
+    exit;
+}
+
+if (!isset($_POST['action'])) {
+    header('Content-Type: application/json');
+    echo json_encode(["erro" => "Ação não especificada."]);
+    exit;
+}
+
+function jsProtection($valor) {
+    return htmlspecialchars($valor, ENT_QUOTES, 'UTF-8');
 }
 
 $action = $_POST['action'];
-$Produto_ID = $_POST['Produto_ID'];
-$NomeProduto = $_POST['NomeProduto'];
-$QuantidadeProduto = $_POST['QuantidadeProduto'];       
-$CategoriaProduto = $_POST['CategoriaProduto'];
-$PrecoProduto = $_POST['PrecoProduto'];
-
-if (isset($_POST['action'])) {
-    $action = $_POST['action'];
-} else {
-    die("Ação não especificada.");
-}
+$Produto_ID = isset($_POST['Produto_ID']) ? $_POST['Produto_ID'] : null;
+$NomeProduto = isset($_POST['NomeProduto']) ? $_POST['NomeProduto'] : null;
+$QuantidadeProduto = isset($_POST['QuantidadeProduto']) ? $_POST['QuantidadeProduto'] : null;       
+$CategoriaProduto = isset($_POST['CategoriaProduto']) ? $_POST['CategoriaProduto'] : null;
+$PrecoProduto = isset($_POST['PrecoProduto']) ? $_POST['PrecoProduto'] : null;
 
 
 
@@ -39,7 +52,13 @@ switch($action) {
         header('Content-Type: application/json');
         $produtos = [];
         while($row = $result->fetch_assoc()) {
-            $produtos[] = $row;
+            $produtos[] = [
+                'Produto_ID' => $row['Produto_ID'],
+                'NomeProduto' => jsProtection($row['NomeProduto']),
+                'CategoriaProduto' => jsProtection($row['CategoriaProduto']),
+                'PrecoProduto' => $row['PrecoProduto'],
+                'QuantidadeProduto' => $row['QuantidadeProduto']
+            ];
         }
         echo json_encode($produtos);
         
@@ -55,11 +74,18 @@ switch($action) {
             $stmt->execute();
             $result = $stmt->get_result();
             
-            header('Content-Type: application/json');
             $produtos = [];
             while($row = $result->fetch_assoc()) {
-                $produtos[] = $row;
-            }
+                $produtos[] = [
+                'Produto_ID' => $row['Produto_ID'],
+                'NomeProduto' => jsProtection($row['NomeProduto']),
+                'CategoriaProduto' => jsProtection($row['CategoriaProduto']),
+                'PrecoProduto' => $row['PrecoProduto'],
+                'QuantidadeProduto' => $row['QuantidadeProduto']
+                ];             
+            }           
+
+            header('Content-Type: application/json');
             echo json_encode($produtos);
             
             $stmt->close();
@@ -67,7 +93,9 @@ switch($action) {
         break;
     case 'cadastrar':
         if (empty($NomeProduto) || empty($QuantidadeProduto) || empty($CategoriaProduto) || empty($PrecoProduto)) {
-            die("Todos os campos devem ser preenchidos para cadastrar um produto.");
+            header('Content-Type: application/json');
+            echo json_encode(["errorCadastro" => "Todos os campos devem ser preenchidos para cadastrar um produto."]);
+            exit;
         } else {
             $stmt = $conn->prepare("INSERT INTO Produtos (NomeProduto, QuantidadeProduto, CategoriaProduto, PrecoProduto) VALUES (?, ?, ?, ?)");
             $stmt->bind_param("sisd", $NomeProduto, $QuantidadeProduto, $CategoriaProduto, $PrecoProduto);
@@ -92,7 +120,9 @@ switch($action) {
         $result = $stmt->get_result();
 
         if (empty($Produto_ID) || empty($NomeProduto) || empty($QuantidadeProduto) || empty($CategoriaProduto) || empty($PrecoProduto)) {
-            die("Todos os campos devem ser preenchidos para alterar um produto.");
+            header('Content-Type: application/json');
+            echo json_encode(["errorAlterar" => "Todos os campos devem ser preenchidos para alterar um produto."]);
+            exit;
         } else {
             if ($result->num_rows == 0) {
                 header("Content-Type: application/json");
@@ -117,32 +147,42 @@ switch($action) {
             }
         break;
     case 'excluir':
+        if (empty($Produto_ID)) {
+            header("Content-Type: application/json");
+            echo json_encode(["errorExcluir" => "ID do produto não informado."]);
+            exit;
+        }
+        
         $stmt = $conn->prepare("SELECT * FROM Produtos WHERE Produto_ID=?");
         $stmt->bind_param("i", $Produto_ID);
         $stmt->execute();
-
-        if (empty($Produto_ID)) {
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows == 0) {
             header("Content-Type: application/json");
             echo json_encode(["errorExcluir" => "Produto com ID $Produto_ID não encontrado."]);
             $stmt->close();
+            exit;
+        }
+        
+        $stmt->close();
+        $stmt = $conn->prepare("DELETE FROM Produtos WHERE Produto_ID=?");
+        $stmt->bind_param("i", $Produto_ID);
+        
+        if ($stmt->execute()) {
+            header("Content-Type: application/json");
+            echo json_encode(["sucessoExcluir" => "Produto excluído com sucesso."]);
+            $stmt->close();
         } else {
-            if ($result->num_rows == 0) {
-                header("Content-Type: application/json");
-                echo json_encode(["errorExcluir" => "Produto com ID $Produto_ID não encontrado."]);
-                $stmt->close();
-            } else {
-                $stmt = $conn->prepare("DELETE FROM Produtos WHERE Produto_ID=?");
-                $stmt->bind_param("i", $Produto_ID);
-                $stmt->execute();
-                $result = $stmt->get_result();
-                header("Content-Type: application/json");
-                echo json_encode(["sucessoExcluir" => "Produto excluído com sucesso."]);
-                $stmt->close();
-            }
+            header("Content-Type: application/json");
+            echo json_encode(["errorExcluir" => "Erro ao excluir produto."]);
+            $stmt->close();
         }
         break;
     default:
-        die("Ação inválida.");  
+        header('Content-Type: application/json');
+        echo json_encode(["erro" => "Ação inválida."]);
+        exit;
         break;
 }
 $conn->close();

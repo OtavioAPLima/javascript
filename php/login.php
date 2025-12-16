@@ -1,5 +1,4 @@
 <?php
-
 $servername = "127.0.0.1";
 $username = "root";
 $password = "SenhaForte";
@@ -15,7 +14,7 @@ if ($conn->connect_error) {
 // Verificar dados
 if (!isset($_POST["Usuario"]) || !isset($_POST["Senha"]) || empty($_POST["Usuario"]) || empty($_POST["Senha"])) {
     $conn->close();
-    header("Location: index.html");
+    header("Location: /html/index.html?erro=2");
     exit;
 }
 
@@ -23,17 +22,32 @@ $Usuario = $_POST["Usuario"];
 $Senha = $_POST["Senha"];
 
 // Preparar e query
-$stmt = $conn->prepare("SELECT Usuario, Senha FROM Login WHERE Usuario=? AND Senha=?");
-$stmt->bind_param("ss", $Usuario, $Senha);
+$stmt = $conn->prepare("SELECT Usuario, Senha FROM Login WHERE Usuario=?");
+$stmt->bind_param("s", $Usuario);
 $stmt->execute();
 $result = $stmt->get_result();
 
-//login
+session_start();
+
+// Verifica se usuário existe
 if ($result->num_rows == 1) {
-    $stmt->close();
-    $conn->close();
-    header("Location: /html/menuUsuario.html");
+    $row = $result->fetch_assoc();
+    
+    // Verifica se a senha está correta (comparando com hash no banco)
+    if (password_verify($Senha, $row['Senha'])) {
+        $_SESSION['Usuario'] = $Usuario;
+        $stmt->close();
+        $conn->close();
+        header("Location: /html/menuUsuario.html");
+    } else {
+        // Senha incorreta
+        $stmt->close();
+        $conn->close();
+        header("Location: /html/index.html?erro=1");
+        exit;
+    }
 } else {
+    // Usuário não existe
     $stmt->close();
     $conn->close();
     header("Location: /html/index.html?erro=1");

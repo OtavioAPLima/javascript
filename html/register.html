@@ -21,14 +21,38 @@
                 <form action="../php/register.php" method="POST">
                     <label for="Usuario">Usuário:</label><br>
                     <input type="text" class="Forms" id="Usuario" name="Usuario" placeholder="Usuário"><br>
+
                     <label for="Senha">Senha:</label><br>
                     <input type="password" class="Forms" id="Senha" name="Senha" placeholder="12345678"><br>
+
                     <label for="Senha2">Confirmar senha:</label><br>
                     <input type="password" class="Forms" id="Senha2" name="Senha2" placeholder="12345678"><br>
+
                     <label for="Email">E-mail:</label><br>
                     <input type="email" class="Forms" id="Email" name="Email" placeholder="email@exemplo.com"><br>
+
                     <input type="submit" value="Submit">
                 </form>
+
+                <button onclick="document.location='index.html'" id="login"> Voltar</button>
+                <!-- erro de login -->
+                <script>
+                    const urlParams = new URLSearchParams(window.location.search);
+                    switch (urlParams.get('erro')) {
+                        case '1':
+                            alert('Por favor, preencha todos os campos!');
+                            break;
+                        case '2':
+                            alert('As senhas não coincidem!');
+                            break;
+                        case '3':
+                            alert('Usuário já existe!');
+                            break;
+                    }
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    
+                </script>
+                
             </div>
         </div>
 
