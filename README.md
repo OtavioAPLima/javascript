@@ -1,4 +1,7 @@
-Site de gestão de estoque
+#Site de gestão de estoque
+
+Resumo:
+Visa relacionar PHP, JavaScript e MySQL para desenvolver um site funcional de gestão de estoque, mesclando desenvolvimento seguro e boas práticas de programação.
 
 Linguagens:
 -PHP(mysqli);
@@ -13,5 +16,3 @@ Conteúdo:
 -Alteração de Produtos;
 -Exclusão de Produtos.
 
-Resumo:
-Visa relacionar PHP, JavaScript e MySQL para desenvolver um site funcional de gestão de estoque, mesclando desenvolvimento seguro e boas práticas de programação.
