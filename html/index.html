@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="pt-BR">
 
 <head>
     <TITLE>Projeto JavaScript</TITLE>
@@ -18,19 +18,23 @@
 
         <div id="Corpo">
             <div class="Login">
-                <form action="../php/login.php" method="POST">
+                <form action="../php/login.php" method="POST" id="formLogin">
 
-                    <label for="Usuario">Usuário:</label><br>
-                    <input type="text" class="Forms" id="Usuario" name="Usuario" placeholder="Usuario"><br>
+                    <input type="hidden" name="csrf_token" id="csrf_token" value="">
+
+                    <label for="usuario">Usuário:</label><br>
+                    <input type="text" class="Forms" id="usuario" name="usuario" placeholder="Usuario"><br>
                 
-                    <label for="Senha">Senha:</label><br>
-                    <input type="password" class="Forms" id="Senha" name="Senha" placeholder="12345678"><br>
+                    <label for="senha">Senha:</label><br>
+                    <input type="password" class="Forms" id="senha" name="senha" placeholder="12345678"><br>
 
-                    <a href="recuperarSenha.html">Esqueceu a senha?</a><br><br>
+                    <a href="recuperarSenha.html">Esqueceu a senha?</a><br>
 
-                    <input type="submit" value="Enviar">
-                </form>
-                <button onclick="document.location='register.html'" id="registro"> Registro</button>
+                    <div class="botoes-container">
+                        <input type="submit" value="Entrar">
+                        <button type="button" onclick="document.location='register.html'" id="registro">Registro</button>
+                    </div>
+                </form>             
             </div>
         </div>
     </div>
@@ -39,15 +43,49 @@
 
     <!-- erro de login -->
     <script>
+        // Buscar token CSRF
+        console.log('Buscando token CSRF...');
+        fetch('../php/getCSRFToken.php', {
+            credentials: 'same-origin'
+        })
+            .then(response => {
+                console.log('Resposta recebida:', response.status);
+                if (!response.ok) {
+                    throw new Error('Erro ao buscar token: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Token recebido:', data.csrf_token);
+                document.getElementById('csrf_token').value = data.csrf_token;
+            })
+            .catch(error => {
+                console.error('Erro ao buscar token CSRF:', error);
+                alert('Erro ao carregar página. Recarregue e tente novamente.');
+            });
+
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('erro') === '1') {
-            alert('Usuário ou senha incorretos!');
-            window.history.replaceState({}, document.title, window.location.pathname);
-            
-        } else if (urlParams.get('erro') === '2') {
-            alert('Por favor, preencha todos os campos!');
+        switch (urlParams.get('erro')) {
+            case '1':
+                alert('Usuário ou senha incorretos.');
+                window.history.replaceState({}, document.title, window.location.pathname);
+                break;
+            case '2':
+                alert('Por favor, preencha todos os campos.');
+                window.history.replaceState({}, document.title, window.location.pathname);
+                break;
+            case '3':
+                alert('Muitas tentativas de login falhas. Tente novamente mais tarde.');
+                window.history.replaceState({}, document.title, window.location.pathname);
+                break;
+            default:
+                break;
+        }
+        if (urlParams.get('status') === 1) {
+            alert('Senha alterada com sucesso. Faça login com a nova senha.');
             window.history.replaceState({}, document.title, window.location.pathname);
         }
+        
     </script>
 
 </body>

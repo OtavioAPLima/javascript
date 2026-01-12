@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="pt-BR">
 
 <head>
     <TITLE>Projeto JavaScript</TITLE>
@@ -18,15 +18,19 @@
 
         <div id="Corpo">
             <div class="Login">
-                <form action="../php/login.php" method="POST">
+                <form action="../php/recuperarSenha.php" method="POST" id="formRecuperar">
                     <p>Será enviado um E-mail com uma nova senha para o endereço informado.</p><br>
 
-                    <label for="Email">E-mail</label><br>
-                    <input type="email" class="Forms" id="Email" name="Email" placeholder="email@exemplo.com"><br>
+                    <input type="hidden" name="csrf_token" id="csrf_token" value="">
 
-                    <input type="submit" value="Enviar">
+                    <label for="email">E-mail</label><br>
+                    <input type="email" class="Forms" id="email" name="email" placeholder="email@exemplo.com">
+
+                    <div class="botoes-container">
+                        <button type="button" onclick="document.location='index.html'" id="voltar"> Voltar</button>
+                        <input type="submit" value="Enviar">   
+                    </div>
                 </form>
-                <button onclick="document.location='index.html'" id="voltar"> Voltar</button>
             </div>
         </div>
     </div>
@@ -35,7 +39,26 @@
 
     
     <script>
-        
+        // Buscar token CSRF
+        console.log('Buscando token CSRF...');
+        fetch('../php/getCSRFToken.php', {
+            credentials: 'same-origin'
+        })
+            .then(response => {
+                console.log('Resposta recebida:', response.status);
+                if (!response.ok) {
+                    throw new Error('Erro ao buscar token: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Token recebido:', data.csrf_token);
+                document.getElementById('csrf_token').value = data.csrf_token;
+            })
+            .catch(error => {
+                console.error('Erro ao buscar token CSRF:', error);
+                alert('Erro ao carregar página. Recarregue e tente novamente.');
+            });
     </script>
 
 </body>

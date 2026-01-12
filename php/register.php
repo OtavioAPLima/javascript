@@ -1,5 +1,18 @@
 <?php
 
+session_start();
+
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+
+// Validar token CSRF primeiro
+require_once(__DIR__ . '/csrf.php');
+if (!isset($_POST['csrf_token']) || !validarTokenCSRF($_POST['csrf_token'])) {
+    header("Location: ../html/register.html?erro=4");
+    exit;
+}
+
 $servername = "127.0.0.1";
 $username = "root";
 $password = "SenhaForte";
@@ -13,27 +26,27 @@ if ($conn->connect_error) {
 }
 
 // Verificar dados
-if (!isset($_POST["Usuario"]) || !isset($_POST["Senha"]) || !isset($_POST["Senha2"]) || !isset($_POST["Email"]) || empty($_POST["Usuario"]) || empty($_POST["Senha"]) || empty($_POST["Senha2"]) || empty($_POST["Email"])) {
+if (!isset($_POST["usuario"]) || !isset($_POST["senha"]) || !isset($_POST["senha2"]) || !isset($_POST["email"]) || empty($_POST["usuario"]) || empty($_POST["senha"]) || empty($_POST["senha2"]) || empty($_POST["email"])) {
+    $conn->close();
     header("Location: ../html/register.html?erro=1");
     exit;
 }
 
-$Usuario = $_POST["Usuario"];
-$Senha = $_POST["Senha"];
-$Senha2 = $_POST["Senha2"];
-$Email = $_POST["Email"];
+$usuario = $_POST["usuario"];
+$senha = $_POST["senha"];
+$senha2 = $_POST["senha2"];
+$email = $_POST["email"];
 
-
-if ($Senha !== $Senha2) {
+if ($senha !== $senha2) {
     header("Location: ../html/register.html?erro=2");
     exit;
 }
 
-$senhaCriptografada = password_hash($Senha, PASSWORD_BCRYPT, ['cost' => 12]);
+$senhaCriptografada = password_hash($senha, PASSWORD_BCRYPT, ['cost' => 12]);
 
  // Verificar se o usuário já existe
-$stmt = $conn->prepare("SELECT * FROM Login WHERE Usuario=?");
-$stmt->bind_param("s", $Usuario);
+$stmt = $conn->prepare("SELECT * FROM login WHERE usuario=?");
+$stmt->bind_param("s", $usuario);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -47,8 +60,8 @@ if ($result->num_rows > 0) {
 $stmt->close();
 
 // Inserir novo usuário
-$stmt = $conn->prepare("INSERT INTO Login (Usuario, Senha, Email) VALUES (?, ?, ?)");
-$stmt->bind_param("sss", $Usuario, $senhaCriptografada, $Email);
+$stmt = $conn->prepare("INSERT INTO login (usuario, senha, email) VALUES (?, ?, ?)");
+$stmt->bind_param("sss", $usuario, $senhaCriptografada, $email);
 
 if ($stmt->execute()) {
     $stmt->close();

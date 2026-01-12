@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR"> 
+<head>
+    <title>Projeto JavaScript</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/geral.css">
+    <link rel="stylesheet" href="../css/resetarSenha.css">
+</head>
+<body>
+    <div id="Principal">
+        <div id="Header">
+            <p class="paragrafoHeader" id="nomeFuncao">Consulta de preço</p>
+        </div>
+
+        <div id="Corpo">
+            <div class="resetarSenhaContainer">
+                <form id="formResetarSenha" action="../php/resetarSenha.php" method="POST">
+
+                    <p>Por favor, insira seu nome de usuário e a nova senha desejada.</p><br>
+
+                    <input type="hidden" name="csrf_token" id="csrf_token" value="">
+
+                    <input type="hidden" name="token" id="token" value="">
+
+                    <label for="usuario">Usuário:</label><br>
+                    <input type="text" id="usuario" name="usuario" required><br>
+
+
+                    <p id="caractere">8 ou mais caracteres</p>
+                    <p id="maiuscula">Ao menos uma letra maiúscula</p>
+                    <p id="minuscula">Ao menos uma letra minúscula</p>
+                    <p id="numero">Ao menos um número</p>
+                    <p id="especial">Ao menos um caractere especial (!@#$%^&*)</p>
+                    <p id="senhasIguais">Senhas iguais</p><br>
+
+                    <label for="senha">Nova Senha:</label><br>
+                    <input type="password" id="senha" name="senha" required><br>
+
+                    <label for="senha2">Confirmar Nova Senha:</label><br>
+                    <input type="password" id="senha2" name="senha2" required><br>
+
+                    <div class="botoes-container">   
+                        <button type="button" onclick="document.location='index.html'" id="voltar"> Voltar</button>
+                        <button type="submit">Enviar</button>
+                    </div>
+                    <script src="../javaScript/resetarSenha.js"></script>
+
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="Footer">
+    </div>
+</body>
+</html>

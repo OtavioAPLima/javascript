@@ -1,3 +1,46 @@
+fetch('../php/getCSRFToken.php', {
+        credentials: 'same-origin'
+    })
+        .then(response => {
+            console.log('Resposta recebida:', response.status);
+            if (!response.ok) {
+                throw new Error('Erro ao buscar token: ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Token recebido:', data.csrf_token);
+            document.getElementById('csrf_token').value = data.csrf_token;
+        })
+        .catch(error => {
+            console.error('Erro ao buscar token CSRF:', error);
+            alert('Erro ao carregar página. Recarregue e tente novamente.');
+        });
+
+
+fetchUsuarioInfo();
+
+function fetchUsuarioInfo() {
+    fetch('../php/menuUsuario.php', {
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Erro ao buscar informações do usuário: ' + response.status);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Informações do usuário recebidas:', data);
+        document.getElementById('nomeUsuario').textContent = data.nomeUsuario;
+        document.getElementById('imgAvatar').src = data.avatarUrl;
+    })
+    .catch(error => {
+        console.error('Erro ao buscar informações do usuário:', error);
+        alert('Erro ao carregar informações do usuário. Recarregue e tente novamente.');
+    });
+}
+
 // Váriaveis de controle para o php
 let modoPesquisa = false;
 let modoCadastro = false;
@@ -21,7 +64,7 @@ function logout() {
         console.log(data);
         if (data.sucessoLogout) {
             alert(data.sucessoLogout);
-            window.location.href = '/html/index.html'; // Redirecionar para a página de login
+            window.location.href = '../html/index.html'; // Redirecionar para a página de login
         } else if (data.errorLogout) {
             alert(data.errorLogout);
         }
@@ -34,8 +77,8 @@ function excluir(id) {
     if (confirm('ID do produto a ser excluído: ' + id)) {
         let loadForm = new FormData();
         loadForm.append('action', 'excluir');
-        loadForm.append('Produto_ID', id);
-        fetch('/php/menuUsuario.php', {
+        loadForm.append('produto_ID', id);
+        fetch('../php/menuUsuario.php', {
             method: 'POST',
             body: loadForm
             })
@@ -63,7 +106,7 @@ function excluir(id) {
 function exibirTabelas() {
     let loadForm = new FormData();
     loadForm.append('action', 'exibirTodos');
-    fetch('/php/menuUsuario.php', {
+    fetch('../php/menuUsuario.php', {
         method: 'POST',
         body: loadForm
     })
@@ -88,41 +131,42 @@ function exibirTabelas() {
         // Exibir os produtos na página 
         produtos.forEach(p => {
             const tr = document.createElement('tr');
+            const bt = document.createElement('button');
 
             tr.className = 'alterarTabela';
             tr.onclick = function() { alterarTabela(this); };
 
-            tr.dataset.id = p.Produto_ID;
-            tr.dataset.nome = p.NomeProduto;
-            tr.dataset.categoria = p.CategoriaProduto;
-            tr.dataset.preco = p.PrecoProduto;
-            tr.dataset.quantidade = p.QuantidadeProduto;
-
+            tr.dataset.id = p.produto_ID;
+            tr.dataset.nome = p.nomeProduto;
+            tr.dataset.categoria = p.categoriaProduto;
+            tr.dataset.preco = p.precoProduto;
+            tr.dataset.quantidade = p.quantidadeProduto;
             const tdId = document.createElement('td');
-            tdId.textContent = p.Produto_ID;
+            tdId.textContent = p.produto_ID;
             tr.appendChild(tdId);
 
             const tdNome = document.createElement('td');
-            tdNome.textContent = p.NomeProduto;
+            tdNome.textContent = p.nomeProduto;
             tr.appendChild(tdNome);
 
             const tdCategoria = document.createElement('td');
-            tdCategoria.textContent = p.CategoriaProduto;
+            tdCategoria.textContent = p.categoriaProduto;
             tr.appendChild(tdCategoria);
 
             const tdPreco = document.createElement('td');
-            tdPreco.textContent = `R$ ${p.PrecoProduto}`;
+            tdPreco.textContent = `R$ ${p.precoProduto}`;
             tr.appendChild(tdPreco);
 
             const tdQuantidade = document.createElement('td');
-            tdQuantidade.textContent = p.QuantidadeProduto;
+            tdQuantidade.textContent = p.quantidadeProduto;
             tr.appendChild(tdQuantidade);
+
 
             tabela.appendChild(tr);
             
             
             // Adicionar categoria ao set de categorias únicas
-            categoriasUnicas.add(p.CategoriaProduto);
+            categoriasUnicas.add(p.categoriaProduto);
         });
         
         // Limpar e inserir o datalist com categorias únicas
@@ -140,11 +184,15 @@ function exibirTabelas() {
     .catch(error => console.error('Erro:', error));
 
 }
+
+// Carregar tabela ao abrir a página
 window.addEventListener('load', exibirTabelas);
 
 //Função para deixar o menu responsivo
 
-
+//if (window.innerWidth < 800) {
+//    document.getElementById()
+//}
 
 //Enviar formulário sem atualizar a página
 function naoEnviar(event) {
@@ -155,7 +203,7 @@ function naoEnviar(event) {
     //Pesquisar produto
     if (modoPesquisa) {
         formulario.append('action', 'pesquisar');
-        fetch('/php/menuUsuario.php', {
+        fetch('../php/menuUsuario.php', {
             method: 'POST',
             body: formulario
         })
@@ -171,30 +219,29 @@ function naoEnviar(event) {
                 tr.className = 'alterarTabela';
                 tr.onclick = function() { alterarTabela(this); };
 
-                tr.dataset.id = p.Produto_ID;
-                tr.dataset.nome = p.NomeProduto;
-                tr.dataset.categoria = p.CategoriaProduto;
-                tr.dataset.preco = p.PrecoProduto;
-                tr.dataset.quantidade = p.QuantidadeProduto;
-
+                tr.dataset.id = p.produto_ID;
+                tr.dataset.nome = p.nomeProduto;
+                tr.dataset.categoria = p.categoriaProduto;
+                tr.dataset.preco = p.precoProduto;
+                tr.dataset.quantidade = p.quantidadeProduto;
                 const tdId = document.createElement('td');
-                tdId.textContent = p.Produto_ID;
+                tdId.textContent = p.produto_ID;
                 tr.appendChild(tdId);
 
                 const tdNome = document.createElement('td');
-                tdNome.textContent = p.NomeProduto;
+                tdNome.textContent = p.nomeProduto;
                 tr.appendChild(tdNome);
 
                 const tdCategoria = document.createElement('td');
-                tdCategoria.textContent = p.CategoriaProduto;
+                tdCategoria.textContent = p.categoriaProduto;
                 tr.appendChild(tdCategoria);
 
                 const tdPreco = document.createElement('td');
-                tdPreco.textContent = `R$ ${p.PrecoProduto}`;
+                tdPreco.textContent = `R$ ${p.precoProduto}`;
                 tr.appendChild(tdPreco);
 
                 const tdQuantidade = document.createElement('td');
-                tdQuantidade.textContent = p.QuantidadeProduto;
+                tdQuantidade.textContent = p.quantidadeProduto;
                 tr.appendChild(tdQuantidade);
 
                 tabela.appendChild(tr);
@@ -208,7 +255,7 @@ function naoEnviar(event) {
     //Cadastrar produto
     if (modoCadastro) {
         formulario.append('action', 'cadastrar');
-        fetch('/php/menuUsuario.php', {
+        fetch('../php/menuUsuario.php', {
             method: 'POST',
             body: formulario
         })
@@ -230,7 +277,7 @@ function naoEnviar(event) {
     if (modoAlterar) {
         document.getElementById("resultadosTabela").innerHTML = '';
         formulario.append('action', 'alterar');
-        fetch('/php/menuUsuario.php', {
+        fetch('../php/menuUsuario.php', {
             method: 'POST',
             body: formulario
         })
@@ -273,8 +320,8 @@ function pesquisar() {
     document.getElementById('PesquisaForm').reset();
     document.getElementById('botaoForms').value = 'Pesquisar Produtos';
     document.getElementById('PesquisaForm').style.display = 'flex';
-    document.getElementById('Produto_ID_Div').style.display = 'inline-flex';
-    document.getElementById('Quantidade_Produto_Div').style.display = 'none';
+    document.getElementById('produto_ID_Div').style.display = 'inline-flex';
+    document.getElementById('quantidade_Produto_Div').style.display = 'none';
     document.getElementById('botaoForms').style.display = 'block';
     
 }
@@ -294,8 +341,8 @@ function cadastrar() {
     document.getElementById('botaoForms').value = 'Cadastrar Produtos';
     document.getElementById('PesquisaForm').reset();
     document.getElementById('PesquisaForm').style.display = 'flex';
-    document.getElementById('Produto_ID_Div').style.display = 'none';
-    document.getElementById('Quantidade_Produto_Div').style.display = 'inline-flex';
+    document.getElementById('produto_ID_Div').style.display = 'none';
+    document.getElementById('quantidade_Produto_Div').style.display = 'inline-flex';
     document.getElementById('botaoForms').style.display = 'block';
 }
 
@@ -309,12 +356,21 @@ function alterarTabela(linha) {
 
     const resultadosTabela = document.getElementById("resultadosTabela");
     const tr = document.createElement('tr');
-
+    const bt = document.createElement('button');
+    bt.onclick = function() { excluir(id); };
+    bt.textContent = 'Excluir';
+    
+    // Preencher nova linha da tabela
     for (const td of linha.children) {
         const novaTd = document.createElement('td');
         novaTd.textContent = td.textContent;
         tr.appendChild(novaTd);
     }
+
+    // Coluna de excluir
+    const tdExcluir = document.createElement('td');
+    tdExcluir.appendChild(bt);
+    tr.appendChild(tdExcluir);
 
     //Verificar valores
     console.log('ID:', id, 'Nome:', nome, 'Categoria:', categoria, 'Preço:', preco, 'Quantidade:', quantidade);
@@ -323,11 +379,13 @@ function alterarTabela(linha) {
     resultadosTabela.innerHTML = '';
     resultadosTabela.appendChild(tr);
 
-    document.getElementById('Produto_ID_Input').value = id;
-    document.querySelector('input[name="NomeProduto"]').value = nome;
-    document.querySelector('input[name="CategoriaProduto"]').value = categoria;
-    document.querySelector('input[name="PrecoProduto"]').value = preco;
-    document.getElementById('Quantidade_Produto_Input').value = quantidade;
+
+    // Preencher formulário com os valores
+    document.getElementById('produto_ID_Input').value = id;
+    document.querySelector('input[name="nomeProduto"]').value = nome;
+    document.querySelector('input[name="categoriaProduto"]').value = categoria;
+    document.querySelector('input[name="precoProduto"]').value = preco;
+    document.getElementById('quantidade_Produto_Input').value = quantidade;
     
     // Configurar modo de alteração
     modoCadastro = false;
@@ -337,8 +395,8 @@ function alterarTabela(linha) {
     // Configurar formulário para alteração
     document.getElementById('botaoForms').value = 'Alterar Produto';
     document.getElementById('PesquisaForm').style.display = 'flex';
-    document.getElementById('Produto_ID_Div').style.display = 'inline-flex';
-    document.getElementById('Quantidade_Produto_Div').style.display = 'inline-flex';
+    document.getElementById('produto_ID_Div').style.display = 'inline-flex';
+    document.getElementById('quantidade_Produto_Div').style.display = 'inline-flex';
     document.getElementById('botaoForms').style.display = 'block';
     
     

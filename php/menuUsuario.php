@@ -1,7 +1,16 @@
 <?php
+// Desativar exibição de erros para não quebrar JSON
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+error_reporting(E_ALL);
+
 // Verificar sessão ANTES de qualquer output
+ini_set('session.cookie_httponly', 1);
+ini_set('session.cookie_secure', 1);
+ini_set('session.cookie_samesite', 'Strict');
 session_start();
-if (!isset($_SESSION['Usuario'])) {
+
+if (!isset($_SESSION['usuario'])) {
     header('Content-Type: application/json');
     echo json_encode(["erro" => "Sessão expirada ou usuário não autenticado.", "redirect" => "/html/index.html"]);
     exit;
@@ -31,21 +40,22 @@ function jsProtection($valor) {
     return htmlspecialchars($valor, ENT_QUOTES, 'UTF-8');
 }
 
+$usuarioAvatar = isset($_SESSION['avatar']) ? $_SESSION['avatar'] : '../imagens/default.png';
+$usuarioSessao = $_SESSION['usuario'];
 $action = $_POST['action'];
-$Produto_ID = isset($_POST['Produto_ID']) ? $_POST['Produto_ID'] : null;
-$NomeProduto = isset($_POST['NomeProduto']) ? $_POST['NomeProduto'] : null;
-$QuantidadeProduto = isset($_POST['QuantidadeProduto']) ? $_POST['QuantidadeProduto'] : null;       
-$CategoriaProduto = isset($_POST['CategoriaProduto']) ? $_POST['CategoriaProduto'] : null;
-$PrecoProduto = isset($_POST['PrecoProduto']) ? $_POST['PrecoProduto'] : null;
+$produto_ID = isset($_POST['produto_ID']) ? $_POST['produto_ID'] : null;
+$nomeProduto = isset($_POST['nomeProduto']) ? $_POST['nomeProduto'] : null;
+$quantidadeProduto = isset($_POST['quantidadeProduto']) ? $_POST['quantidadeProduto'] : null;       
+$categoriaProduto = isset($_POST['categoriaProduto']) ? $_POST['categoriaProduto'] : null;
+$precoProduto = isset($_POST['precoProduto']) ? $_POST['precoProduto'] : null;
 
-
-
-
+jsProtection($usuarioSessao, $usuarioAvatar);
+header('Content-Type: application/json');
 
 // Recebendo valor de ação e executando pesquisa, cadastro ou alteração
 switch($action) {
     case 'exibirTodos':
-        $stmt = $conn->prepare("SELECT * FROM Produtos");
+        $stmt = $conn->prepare("SELECT * FROM produtos");
         $stmt->execute();
         $result = $stmt->get_result();
         
@@ -53,11 +63,11 @@ switch($action) {
         $produtos = [];
         while($row = $result->fetch_assoc()) {
             $produtos[] = [
-                'Produto_ID' => $row['Produto_ID'],
-                'NomeProduto' => jsProtection($row['NomeProduto']),
-                'CategoriaProduto' => jsProtection($row['CategoriaProduto']),
-                'PrecoProduto' => $row['PrecoProduto'],
-                'QuantidadeProduto' => $row['QuantidadeProduto']
+                'produto_ID' => $row['produto_ID'],
+                'nomeProduto' => jsProtection($row['nomeProduto']),
+                'categoriaProduto' => jsProtection($row['categoriaProduto']),
+                'precoProduto' => $row['precoProduto'],
+                'quantidadeProduto' => $row['quantidadeProduto']
             ];
         }
         echo json_encode($produtos);
@@ -65,23 +75,24 @@ switch($action) {
         $stmt->close();
         break;
     case 'pesquisar':
-        if (empty($NomeProduto) && empty($CategoriaProduto)) {
+        if (empty($nomeProduto) && empty($categoriaProduto) && empty($produto_ID) && empty($precoProduto) && empty($quantidadeProduto)) {
             header('Content-Type: application/json');
-            echo json_encode(["erro" => "Nenhum campo foi preenchido."]);
-        } else {
-            $stmt = $conn->prepare("SELECT * FROM Produtos WHERE NomeProduto=? OR CategoriaProduto=? OR Produto_ID=?");
-            $stmt->bind_param("ssi", $NomeProduto, $CategoriaProduto, $Produto_ID);
+            echo json_encode(["erroPesquisa" => "Nenhum critério de pesquisa fornecido."]);
+            exit;
+        } else { 
+            $stmt = $conn->prepare("SELECT * FROM produtos WHERE nomeProduto=? OR categoriaProduto=? OR produto_ID=? OR precoProduto=? OR quantidadeProduto=?");
+            $stmt->bind_param("ssidd", $nomeProduto, $categoriaProduto, $produto_ID, $precoProduto, $quantidadeProduto);
             $stmt->execute();
             $result = $stmt->get_result();
             
             $produtos = [];
             while($row = $result->fetch_assoc()) {
                 $produtos[] = [
-                'Produto_ID' => $row['Produto_ID'],
-                'NomeProduto' => jsProtection($row['NomeProduto']),
-                'CategoriaProduto' => jsProtection($row['CategoriaProduto']),
-                'PrecoProduto' => $row['PrecoProduto'],
-                'QuantidadeProduto' => $row['QuantidadeProduto']
+                'produto_ID' => $row['produto_ID'],
+                'nomeProduto' => jsProtection($row['nomeProduto']),
+                'categoriaProduto' => jsProtection($row['categoriaProduto']),
+                'precoProduto' => $row['precoProduto'],
+                'quantidadeProduto' => $row['quantidadeProduto']
                 ];             
             }           
 
@@ -92,13 +103,22 @@ switch($action) {
         }
         break;
     case 'cadastrar':
-        if (empty($NomeProduto) || empty($QuantidadeProduto) || empty($CategoriaProduto) || empty($PrecoProduto)) {
+        if (!is_numeric($quantidadeProduto) || $quantidadeProduto < 0) {
+        echo json_encode(["errorCadastro" => "Quantidade inválida."]);
+        exit;
+        }
+        
+        if (!is_numeric($precoProduto) || $precoProduto < 0) {
+            echo json_encode(["errorCadastro" => "Preço inválido."]);
+            exit;
+        }
+        if (empty($nomeProduto) || empty($quantidadeProduto) || empty($categoriaProduto) || empty($precoProduto)) {
             header('Content-Type: application/json');
             echo json_encode(["errorCadastro" => "Todos os campos devem ser preenchidos para cadastrar um produto."]);
             exit;
         } else {
-            $stmt = $conn->prepare("INSERT INTO Produtos (NomeProduto, QuantidadeProduto, CategoriaProduto, PrecoProduto) VALUES (?, ?, ?, ?)");
-            $stmt->bind_param("sisd", $NomeProduto, $QuantidadeProduto, $CategoriaProduto, $PrecoProduto);
+            $stmt = $conn->prepare("INSERT INTO produtos (nomeProduto, quantidadeProduto, categoriaProduto, precoProduto) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("sisd", $nomeProduto, $quantidadeProduto, $categoriaProduto, $precoProduto);
             if ($stmt->execute()) {
                 header("Content-Type: application/json");
                 echo json_encode(["sucessoCadastro" => "Produto cadastrado com sucesso."]);
@@ -114,12 +134,12 @@ switch($action) {
         }
         break;
     case 'alterar':
-        $stmt = $conn->prepare("SELECT * FROM Produtos WHERE Produto_ID=?");
-        $stmt->bind_param("i", $Produto_ID);
+        $stmt = $conn->prepare("SELECT * FROM produtos WHERE produto_ID=?");
+        $stmt->bind_param("i", $produto_ID);
         $stmt->execute();
         $result = $stmt->get_result();
 
-        if (empty($Produto_ID) || empty($NomeProduto) || empty($QuantidadeProduto) || empty($CategoriaProduto) || empty($PrecoProduto)) {
+        if (empty($produto_ID) || empty($nomeProduto) || empty($quantidadeProduto) || empty($categoriaProduto) || empty($precoProduto)) {
             header('Content-Type: application/json');
             echo json_encode(["errorAlterar" => "Todos os campos devem ser preenchidos para alterar um produto."]);
             exit;
@@ -132,8 +152,8 @@ switch($action) {
             }
             $stmt->close();
 
-            $stmt = $conn->prepare("UPDATE Produtos SET NomeProduto=?, QuantidadeProduto=?, CategoriaProduto=?, PrecoProduto=? WHERE Produto_ID=?");
-            $stmt->bind_param("sisdi", $NomeProduto, $QuantidadeProduto, $CategoriaProduto, $PrecoProduto, $Produto_ID);
+            $stmt = $conn->prepare("UPDATE produtos SET nomeProduto=?, quantidadeProduto=?, categoriaProduto=?, precoProduto=? WHERE produto_ID=?");
+            $stmt->bind_param("sisdi", $nomeProduto, $quantidadeProduto, $categoriaProduto, $precoProduto, $produto_ID);
             if ($stmt->execute()) {
                 header("Content-Type: application/json");
                 echo json_encode(["sucessoAlterar" => "Produto alterado com sucesso."]);
@@ -147,27 +167,27 @@ switch($action) {
             }
         break;
     case 'excluir':
-        if (empty($Produto_ID)) {
+        if (empty($produto_ID)) {
             header("Content-Type: application/json");
             echo json_encode(["errorExcluir" => "ID do produto não informado."]);
             exit;
         }
         
-        $stmt = $conn->prepare("SELECT * FROM Produtos WHERE Produto_ID=?");
-        $stmt->bind_param("i", $Produto_ID);
+        $stmt = $conn->prepare("SELECT * FROM produtos WHERE produto_ID=?");
+        $stmt->bind_param("i", $produto_ID);
         $stmt->execute();
         $result = $stmt->get_result();
         
         if ($result->num_rows == 0) {
             header("Content-Type: application/json");
-            echo json_encode(["errorExcluir" => "Produto com ID $Produto_ID não encontrado."]);
+            echo json_encode(["errorExcluir" => "Produto com ID $produto_ID não encontrado."]);
             $stmt->close();
             exit;
         }
         
         $stmt->close();
-        $stmt = $conn->prepare("DELETE FROM Produtos WHERE Produto_ID=?");
-        $stmt->bind_param("i", $Produto_ID);
+        $stmt = $conn->prepare("DELETE FROM produtos WHERE produto_ID=?");
+        $stmt->bind_param("i", $produto_ID);
         
         if ($stmt->execute()) {
             header("Content-Type: application/json");

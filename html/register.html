@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="pt-BR">
 
 <head>
     <TITLE>Projeto JavaScript</TITLE>
@@ -19,24 +19,95 @@
         <div id="Corpo">
             <div class="Login">
                 <form action="../php/register.php" method="POST">
-                    <label for="Usuario">Usuário:</label><br>
-                    <input type="text" class="Forms" id="Usuario" name="Usuario" placeholder="Usuário"><br>
 
-                    <label for="Senha">Senha:</label><br>
-                    <input type="password" class="Forms" id="Senha" name="Senha" placeholder="12345678"><br>
+                    <input type="hidden" name="csrf_token" id="csrf_token" value="">
 
-                    <label for="Senha2">Confirmar senha:</label><br>
-                    <input type="password" class="Forms" id="Senha2" name="Senha2" placeholder="12345678"><br>
+                    <label for="usuario">Usuário:</label><br>
+                    <input type="text" class="Forms" id="usuario" name="usuario" placeholder="Usuário"><br>
 
-                    <label for="Email">E-mail:</label><br>
-                    <input type="email" class="Forms" id="Email" name="Email" placeholder="email@exemplo.com"><br>
+                    <label for="email">E-mail:</label><br>
+                    <input type="email" class="Forms" id="email" name="email" placeholder="email@exemplo.com"><br>
 
-                    <input type="submit" value="Submit">
+                    <label for="senha">Senha:</label><br>
+                    <input type="password" class="Forms" id="senha" name="senha" placeholder="12345678"><br>
+                    
+                    <p id="caractere">8 ou mais caracteres</p>
+                    <p id="maiuscula">Ao menos uma letra maiúscula</p>
+                    <p id="minuscula">Ao menos uma letra minúscula</p>
+                    <p id="numero">Ao menos um número</p>
+                    <p id="especial">Ao menos um caractere especial (!@#$%^&*)</p><br>
+
+                    <label for="senha2">Confirmar senha:</label><br>
+                    <input type="password" class="Forms" id="senha2" name="senha2" placeholder="12345678"><br>
+                    
+                    <div class="botoes-container">
+                        <button type="button" onclick="document.location='index.html'" id="login">Voltar</button>
+                        <input type="submit" value="Registrar">
+                    </div>
                 </form>
-
-                <button onclick="document.location='index.html'" id="login"> Voltar</button>
                 <!-- erro de login -->
                 <script>
+                    // Buscar token CSRF
+                    console.log('Buscando token CSRF...');
+                    fetch('../php/getCSRFToken.php', {
+                        credentials: 'same-origin'
+                    })
+                        .then(response => {
+                            console.log('Resposta recebida:', response.status);
+                            if (!response.ok) {
+                                throw new Error('Erro ao buscar token: ' + response.status);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Token recebido:', data.csrf_token);
+                            document.getElementById('csrf_token').value = data.csrf_token;
+                        })
+                        .catch(error => {
+                            console.error('Erro ao buscar token CSRF:', error);
+                            alert('Erro ao carregar página. Recarregue e tente novamente.');
+                        });
+
+                    senha = document.getElementById('senha');
+                    senha2 = document.getElementById('senha2');
+                    window.addEventListener('input', (event) => {
+                        if (senha.value.length < 8 ) {
+                            senha.style.borderColor = 'red';
+                            document.getElementById('caractere').style.color = 'red';
+                        }   else {
+                            senha.style.borderColor = 'rgb(204, 204, 204)';
+                            document.getElementById('caractere').style.color = 'green';
+                        }   
+                        if (!senha.value.match(/[A-Z]/)) {              
+                            senha.style.borderColor = 'red';
+                            document.getElementById('maiuscula').style.color = 'red';
+                        }   else {
+                            senha.style.borderColor = 'rgb(204, 204, 204)';
+                            document.getElementById('maiuscula').style.color = 'green';
+                        }
+                        if (!senha.value.match(/[a-z]/)) {              
+                            senha.style.borderColor = 'red';
+                            document.getElementById('minuscula').style.color = 'red';
+                        }   else {
+                            senha.style.borderColor = 'rgb(204, 204, 204)';
+                            document.getElementById('minuscula').style.color = 'green';
+                        }
+                        if (!senha.value.match(/[0-9]/)) {              
+                            senha.style.borderColor = 'red';
+                            document.getElementById('numero').style.color = 'red';
+                        }   else {
+                            senha.style.borderColor = 'rgb(204, 204, 204)';
+                            document.getElementById('numero').style.color = 'green';
+                        }
+                        if (!senha.value.match(/[!@#$%^&*]/)) {              
+                            senha.style.borderColor = 'red';
+                            document.getElementById('especial').style.color = 'red';
+                        }   else {
+                            senha.style.borderColor = 'rgb(204, 204, 204)';
+                            document.getElementById('especial').style.color = 'green';
+                        }
+                        
+                    });
                     const urlParams = new URLSearchParams(window.location.search);
                     switch (urlParams.get('erro')) {
                         case '1':

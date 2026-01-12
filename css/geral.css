@@ -32,15 +32,29 @@
     background-color: rgb(255, 255, 255);
 }
 
-@media screen and (min-width: 800px) {
-    #Corpo {
-        height: 100vh;
-    }
-    
-}
-
 .Forms {
     border: 1px;
     border-color: black;
     border-style: solid;
+}
+
+button, input[type="submit"] {
+    background-color: rgb(10, 72, 114);
+    color: rgb(231, 244, 255);
+    padding: 5px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.botoes-container {
+    display: flex;
+    gap: 10px;
+}
+
+@media screen and (max-width: 800px) {
+        #Header {
+        height: 100px;
+        max-width: 100%;
+        background-color: rgb(10, 72, 114);
+    }
 }

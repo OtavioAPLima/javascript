@@ -12,6 +12,21 @@
     margin-bottom: 10px;
 }
 
+.botoes-container {
+    display: flex;
+    gap: 10px;
+}
+
 #login {
-    margin-top: 20px;
+    flex: 1;
+}
+
+input[type="submit"] {
+    flex: 1;
+}
+
+#caractere, #maiuscula, #minuscula, #numero, #especial {
+    font-size: 14px;
+    color: grey;
+    margin: 2px 0;
 }

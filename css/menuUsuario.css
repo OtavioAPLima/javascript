@@ -34,8 +34,7 @@
 }
 
 
-#PesquisaForm input[type="number"],
-#PesquisaForm input[type="text"] {
+#PesquisaForm input[type="number"], #PesquisaForm input[type="text"] {
     display: block;
 }
 
@@ -44,6 +43,7 @@
 }
 
 #resultados {
+    max-height: 400px;
     margin: 20px auto 0;
     overflow: auto;
     padding-bottom: 10px;
@@ -52,6 +52,7 @@
 
 #resultados table {
     margin: 0 auto;
+    text-align: justify;
 }
 
 .inputForm {
@@ -64,12 +65,12 @@
     padding: 10px 20px;
     border: 1px solid black;
     background-color: rgba(218, 255, 254, 0.648);
-    cursor: pointer;
+    color: black;
     display: inline-block;
     margin: 10px 5px;
 }
 
-#Produto_ID_Div, #Quantidade_Produto_Div {
+#produto_ID_Div, #quantidade_Produto_Div {
     display: none;
 }
 
@@ -86,4 +87,36 @@ table, th, td {
 #botaoForms {
     display: none;
     padding: 5px;
+}
+
+#usuarioLogado {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    float: right;
+}
+
+#avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 10px;
+}
+
+#nomeUsuario {
+    margin: 0 10px;
+    font-weight: bold;
+}
+
+
+@media screen and (max-width: 800px) {
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
 }
