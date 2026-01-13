@@ -1,6 +1,6 @@
 <?php
-// Desativar exibição de erros para não quebrar JSON
-ini_set('display_errors', 0);
+// Habilitar exibição de erros temporariamente para debug
+ini_set('display_errors', 1);
 ini_set('log_errors', 1);
 error_reporting(E_ALL);
 
@@ -40,8 +40,7 @@ function jsProtection($valor) {
     return htmlspecialchars($valor, ENT_QUOTES, 'UTF-8');
 }
 
-$usuarioAvatar = isset($_SESSION['avatar']) ? $_SESSION['avatar'] : '../imagens/default.png';
-$usuarioSessao = $_SESSION['usuario'];
+
 $action = $_POST['action'];
 $produto_ID = isset($_POST['produto_ID']) ? $_POST['produto_ID'] : null;
 $nomeProduto = isset($_POST['nomeProduto']) ? $_POST['nomeProduto'] : null;
@@ -49,8 +48,9 @@ $quantidadeProduto = isset($_POST['quantidadeProduto']) ? $_POST['quantidadeProd
 $categoriaProduto = isset($_POST['categoriaProduto']) ? $_POST['categoriaProduto'] : null;
 $precoProduto = isset($_POST['precoProduto']) ? $_POST['precoProduto'] : null;
 
-jsProtection($usuarioSessao, $usuarioAvatar);
-header('Content-Type: application/json');
+
+
+
 
 // Recebendo valor de ação e executando pesquisa, cadastro ou alteração
 switch($action) {

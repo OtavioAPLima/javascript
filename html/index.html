@@ -18,7 +18,7 @@
 
         <div id="Corpo">
             <div class="Login">
-                <form action="../php/login.php" method="POST" id="formLogin">
+                <form id="formLogin">
 
                     <input type="hidden" name="csrf_token" id="csrf_token" value="">
 
@@ -85,6 +85,59 @@
             alert('Senha alterada com sucesso. Faça login com a nova senha.');
             window.history.replaceState({}, document.title, window.location.pathname);
         }
+        
+        // Interceptar submit do formulário de login
+        document.getElementById('formLogin').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('../php/login.php', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                // Debug: verificar resposta
+                console.log('Status:', response.status);
+                return response.text().then(text => {
+                    console.log('Resposta:', text);
+                    if (text.trim() === '') {
+                        throw new Error('Resposta vazia do servidor');
+                    }
+                    try {
+                        return JSON.parse(text);
+                    } catch (e) {
+                        console.error('Erro ao parsear JSON:', e);
+                        console.error('Texto recebido:', text);
+                        throw e;
+                    }
+                });
+            })
+            .then(data => {
+                if (data.sucesso) {
+                    // Armazenar dados no sessionStorage
+                    sessionStorage.setItem('nomeUsuario', data.usuario);
+                    sessionStorage.setItem('avatarUsuario', data.avatar);
+                    
+                    if (sessionStorage.getItem('avatarUsuario') === null) {
+                        sessionStorage.setItem('avatarUsuario', '../imagens/default.png');
+                    }
+                    
+                    // Redirecionar
+                    window.location.href = data.redirect;
+                } else if (data.erro) {
+                    alert(data.erro);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao fazer login:', error);
+                alert('Erro ao fazer login. Tente novamente.');
+            });
+        });
         
     </script>
 

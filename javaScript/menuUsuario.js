@@ -1,3 +1,4 @@
+// Buscar token CSRF ao carregar a página
 fetch('../php/getCSRFToken.php', {
         credentials: 'same-origin'
     })
@@ -16,30 +17,15 @@ fetch('../php/getCSRFToken.php', {
             console.error('Erro ao buscar token CSRF:', error);
             alert('Erro ao carregar página. Recarregue e tente novamente.');
         });
+    
+// Buscar informações do usuário ao carregar a página
 
+const sessaoUsuario = sessionStorage.getItem('nomeUsuario');
+const avatarUsuario = sessionStorage.getItem('avatarUsuario');
 
-fetchUsuarioInfo();
+document.getElementById('nomeUsuario').textContent = sessaoUsuario;
+document.getElementById('imgAvatar').src = avatarUsuario;
 
-function fetchUsuarioInfo() {
-    fetch('../php/menuUsuario.php', {
-        credentials: 'same-origin'
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Erro ao buscar informações do usuário: ' + response.status);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Informações do usuário recebidas:', data);
-        document.getElementById('nomeUsuario').textContent = data.nomeUsuario;
-        document.getElementById('imgAvatar').src = data.avatarUrl;
-    })
-    .catch(error => {
-        console.error('Erro ao buscar informações do usuário:', error);
-        alert('Erro ao carregar informações do usuário. Recarregue e tente novamente.');
-    });
-}
 
 // Váriaveis de controle para o php
 let modoPesquisa = false;
@@ -101,8 +87,13 @@ function excluir(id) {
 }
 
 
+// Se não tiver os dados, usuário não está logado corretamente
+if (!sessaoUsuario) {
+    window.location.href = '/html/index.html';
+}
 
 // Função para exibir todas as tabelas ao carregar a página
+
 function exibirTabelas() {
     let loadForm = new FormData();
     loadForm.append('action', 'exibirTodos');
@@ -110,7 +101,19 @@ function exibirTabelas() {
         method: 'POST',
         body: loadForm
     })
-    .then(response => response.json())
+    .then(response => {
+        // Debug: ver o que está vindo do servidor
+        return response.text().then(text => {
+            console.log('Resposta do servidor:', text);
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('Erro ao parsear JSON:', e);
+                console.error('Texto recebido:', text);
+                throw e;
+            }
+        });
+    })
     .then(produtos => {
         console.log(produtos); 
         
@@ -187,12 +190,6 @@ function exibirTabelas() {
 
 // Carregar tabela ao abrir a página
 window.addEventListener('load', exibirTabelas);
-
-//Função para deixar o menu responsivo
-
-//if (window.innerWidth < 800) {
-//    document.getElementById()
-//}
 
 //Enviar formulário sem atualizar a página
 function naoEnviar(event) {
@@ -399,7 +396,19 @@ function alterarTabela(linha) {
     document.getElementById('quantidade_Produto_Div').style.display = 'inline-flex';
     document.getElementById('botaoForms').style.display = 'block';
     
-    
 }
 
+// Função para o menu do usuário
 
+function user() {
+    const menuUsuarioDropdown = document.getElementById('menuUsuarioDropdown');
+    menuUsuarioDropdown.style.display = 'flex';
+
+}
+
+window.onclick = function(event) {
+    if (!event.target.matches('#menuUsuarioDropdown') && !event.target.matches('#nomeUsuario') &&!event.target.matches('#imgAvatar')) {
+        menuUsuarioDropdown.style.display = 'none';
+
+    }
+}

@@ -90,25 +90,33 @@ table, th, td {
 }
 
 #usuarioLogado {
+    width: 50px;
     position: absolute;
     top: 10px;
-    right: 10px;
-    display: flex;
+    right: 0;
     align-items: center;
-    float: right;
+    justify-content: center;
 }
 
 #avatar {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
+    display: block;
+}
+
+#imgAvatar {
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
-    overflow: hidden;
-    margin-right: 10px;
+    border: 2px solid black;
 }
 
 #nomeUsuario {
-    margin: 0 10px;
+    text-align: center;
+    color: aliceblue;
     font-weight: bold;
+    display: flex;
+    margin-top: 5px;
 }
 
 
@@ -119,4 +127,29 @@ table, th, td {
         align-items: center;
     }
     
+}
+
+#menuUsuarioDropdown {
+    display: none;
+    position: absolute;
+    background-color: rgb(10, 72, 114);
+    min-width: 148px;
+    min-height: fit-content;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    right: 0;
+    z-index: 1;
+    flex-direction: column;
+}
+
+#menuUsuarioDropdown button {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+#menuUsuarioDropdown button:hover {
+    background-color: white;
+    color: black;
 }

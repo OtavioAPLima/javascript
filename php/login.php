@@ -69,9 +69,38 @@ if ($result->num_rows == 1) {
     if (password_verify($senha, $row['senha'])) {
         session_regenerate_id(true);
         $_SESSION['usuario'] = $usuario;
+        
+        // Buscar avatar do usuário (se existir na tabela)
+        $avatar = '../imagens/default.png'; // Caminho padrão
+        $stmt_avatar = $conn->prepare("SELECT avatar FROM login WHERE usuario=?");
+        $stmt_avatar->bind_param("s", $usuario);
+        $stmt_avatar->execute();
+        $result_avatar = $stmt_avatar->get_result();
+        if ($result_avatar->num_rows > 0) {
+            $row_avatar = $result_avatar->fetch_assoc();
+            if (!empty($row_avatar['avatar'])) {
+                $avatar = $row_avatar['avatar']; // Usar o caminho diretamente
+            }
+        }
+        $_SESSION['avatar'] = $avatar;
+        $stmt_avatar->close();
+        
         $stmt->close();
         $conn->close();
-        header("Location: /html/menuUsuario.html");
+        
+        // Retornar JSON para AJAX ou redirecionar para form tradicional
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'sucesso' => true,
+                'usuario' => $usuario,
+                'avatar' => $avatar,
+                'redirect' => '/html/menuUsuario.html'
+            ]);
+            exit;
+        } else {
+            header("Location: /html/menuUsuario.html");
+        }
     } else {
         // Senha incorreta
         $stmt_tentativa = $conn->prepare("INSERT INTO tentativaLogin (ip_address) VALUES (?)");

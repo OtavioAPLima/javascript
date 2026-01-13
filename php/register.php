@@ -57,11 +57,10 @@ if ($result->num_rows > 0) {
     exit;
 }
 
-$stmt->close();
-
 // Inserir novo usuário
-$stmt = $conn->prepare("INSERT INTO login (usuario, senha, email) VALUES (?, ?, ?)");
-$stmt->bind_param("sss", $usuario, $senhaCriptografada, $email);
+$defaultAvatar = "../imagens/default.png";
+$stmt = $conn->prepare("INSERT INTO login (usuario, senha, email, avatar) VALUES (?, ?, ?, ?)");
+$stmt->bind_param("ssss", $usuario, $senhaCriptografada, $email, $defaultAvatar);
 
 if ($stmt->execute()) {
     $stmt->close();
@@ -74,4 +73,6 @@ if ($stmt->execute()) {
     header("Location: ../html/register.html");
     exit;
 }
+
+$stmt->close();
 ?>

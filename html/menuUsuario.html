@@ -13,14 +13,18 @@
 
             <div id="Header">
                 <p class="paragrafoHeader" id="nomeFuncao">Consulta de preço</p>
-                <button class="botaoHeader" onclick="logout()">Logout</button>
                 <div id="usuarioLogado">
-                    <div id="avatar">
+                    <div id="avatar" onclick="user()">
                         <img src="../imagens/default.png" alt="Avatar" id="imgAvatar">
                     </div>
-                    <p id="nomeUsuario"></p>
+                    <p id="nomeUsuario" onclick="user()"></p>
                 </div>
 
+            </div>
+            <div id="menuUsuarioDropdown">
+                <button>Perfil</button>
+                <button>Configurações</button>
+                <button onclick="logout()">Sair</button>
             </div>
 
             <div id="Corpo">
