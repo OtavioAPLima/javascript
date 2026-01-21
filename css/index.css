@@ -1,3 +1,4 @@
+/* Container do login */
 .Login {
     margin: 100px auto;
     height: 300px;
@@ -8,10 +9,12 @@
 
 }
 
+/* Margem dos formularios */
 .Forms {
     margin-bottom: 15px;
 }
 
+/* Estilo do link de registro */
 #registro {
     margin-top: 10px;
 }

@@ -1,3 +1,4 @@
+/* Container do formulario de registro */
 .Login {
     height: 300px;
     width: 300px;
@@ -8,23 +9,28 @@
 
 }
 
+/* Margem dos formularios */
 .Forms {
     margin-bottom: 10px;
 }
 
+/* Container dos botoes */
 .botoes-container {
     display: flex;
     gap: 10px;
 }
 
+/* Estilo dos botoes dentro do container */
 #login {
     flex: 1;
 }
 
+/* Estilo do botao de registrar dentro do container */
 input[type="submit"] {
     flex: 1;
 }
 
+/* Estilo dos requisitos de senha */
 #caractere, #maiuscula, #minuscula, #numero, #especial {
     font-size: 14px;
     color: grey;

@@ -1,3 +1,27 @@
+/* Container dos formularios*/
+#menuUsuario {
+    position: absolute;
+    display: block;
+    height: fit-content;
+    max-width: fit-content;
+    background-color: rgba(220, 220, 220, 0.515);
+    margin: auto;
+    padding: 10px;
+    margin-top: 20px;
+    text-align: center;
+    z-index: 0;
+}
+
+/* Formularios de controle de estoque*/
+.botao {
+    padding: 10px 20px;
+    border: 1px solid black;
+    background-color: rgba(218, 255, 254, 0.648);
+    color: black;
+    display: inline-block;
+    margin: 10px 5px;
+}
+
 #PesquisaForm {
     display: none;
     margin: 20px auto;
@@ -22,18 +46,6 @@
     margin-bottom: 5px;
 }
 
-#menuUsuario {
-    position: relative;
-    display: block;
-    height: fit-content;
-    max-width: fit-content;
-    background-color: rgba(220, 220, 220, 0.515);
-    margin: 20px auto;
-    padding: 10px;
-    text-align: center;
-}
-
-
 #PesquisaForm input[type="number"], #PesquisaForm input[type="text"] {
     display: block;
 }
@@ -42,17 +54,14 @@
     margin-top: 10px;
 }
 
-#resultados {
-    max-height: 400px;
-    margin: 20px auto 0;
-    overflow: auto;
-    padding-bottom: 10px;
-    text-align: center;
+#botaoForms {
+    display: none;
+    padding: 5px;
 }
 
-#resultados table {
-    margin: 0 auto;
-    text-align: justify;
+
+#produto_ID_Div, #quantidade_Produto_Div {
+    display: none;
 }
 
 .inputForm {
@@ -60,19 +69,25 @@
     background-color: rgba(122, 255, 251, 0.648);
     cursor: pointer;
 }
+/* Fim dos formularios de controle de estoque*/
 
-.botao {
-    padding: 10px 20px;
-    border: 1px solid black;
-    background-color: rgba(218, 255, 254, 0.648);
-    color: black;
-    display: inline-block;
-    margin: 10px 5px;
+/* Resultados da pesquisa */
+/* Container dos resultados */
+#resultados {
+    max-height: 400px;
+    margin: 20px auto 0;
+    overflow: auto;
+    padding-bottom: 10px;
+    text-align: center;
+    z-index: 0;
 }
 
-#produto_ID_Div, #quantidade_Produto_Div {
-    display: none;
+#resultados table {
+    margin: 0 auto;
+    text-align: justify;
 }
+/* Fim dos resultados da pesquisa */
+
 
 table, th, td {
   border: 1px solid black;
@@ -84,10 +99,16 @@ table, th, td {
     cursor: pointer;
 }
 
-#botaoForms {
-    display: none;
-    padding: 5px;
+@media screen and (max-width: 800px) {
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
 }
+
+/* Inicio do menu usuario */
 
 #usuarioLogado {
     width: 50px;
@@ -119,16 +140,6 @@ table, th, td {
     margin-top: 5px;
 }
 
-
-@media screen and (max-width: 800px) {
-    form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    
-}
-
 #menuUsuarioDropdown {
     display: none;
     position: absolute;
@@ -153,3 +164,196 @@ table, th, td {
     background-color: white;
     color: black;
 }
+
+#userConta {
+    position: sticky;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    width: 400px;
+    height: 400px;
+    background-color: rgb(233, 233, 233);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    margin: 50px 0px;
+}
+
+#botaoFecharMenu {
+    position: absolute;
+    display: block;
+    top: 10px;
+    right: 20px;
+    font-size: 30px;
+    background: none;
+    border: none;
+    color: black;
+    cursor: pointer;
+    z-index: 4;
+}
+
+.menu {
+    display: inherit;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: inherit;
+    color: black;
+    background-color: transparent;
+    width: 100%;
+    
+}
+
+#perfil, #configuracoes {
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#configuracoes p, #perfil p , .configuracoes p , .perfil p , #configuracoes label , #perfil label , .configuracoes label , .perfil label{
+    color: black;
+}
+
+#menuUsuarioContainer {
+    display: flex;
+    height: 100%;
+    width: 100%;
+} 
+
+.coluna {
+    display: inline-block;
+    flex-direction: column;
+    height: 100%;
+}
+
+#coluna1 {
+    width: 30%;
+    height: 100%;
+    border-right: 1px solid black;
+    box-sizing: border-box;
+}
+
+#coluna2 {
+    width: 70%;
+    box-sizing: border-box;
+}
+
+#coluna1 button:hover, #coluna2 button:hover {
+    color: rgb(231, 244, 255);
+    background-color: rgb(10, 72, 114);
+}
+
+/* Perfil */
+#perfil{
+    display: inherit;
+    flex-direction: column;
+    z-index: inherit;
+}
+
+#alterarSenha{
+    color: black;
+    width: fit-content;
+}
+
+#excluirConta{
+    color: black;
+    width: fit-content;
+    margin-top: 10px;
+    background-color: transparent;
+}
+
+#nomeUsuarioPerfil, #emailUsuarioPerfil {
+    margin-top: 10px;
+    text-align: center;
+    align-items: center;
+}
+
+#imagemContainer {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    cursor: pointer;
+}
+
+#imgAvatarPerfil {
+    opacity: 1;
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: .5s ease;
+    backface-visibility: hidden;
+}
+
+#transicao {
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: 0;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    color: white;
+    font-size: 16px;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: .5s ease;
+    text-align: center;
+    background-color: transparent;
+}
+
+#imagemContainer:hover #imgAvatarPerfil {
+    opacity: 0.3;
+}
+
+#imagemContainer:hover #transicao {
+    opacity: 1;
+}
+/* Fim Perfil */
+
+
+
+/* Configurações */
+#configuracoes{
+    display: inherit;
+    flex-direction: column;
+    z-index: inherit;
+}
+
+#temaEscuroDiv, #temaClaroDiv {
+    margin-left: 5px;
+    display: flex;
+}
+
+#suporte h3{
+    margin-top: 40px;
+    color: black;
+}
+
+/* Fim Configurações */
+#botaoSalvarCancelar {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    z-index: 4;
+    
+}
+
+#salvarDiv, #cancelarDiv {
+    position: relative;
+    display: inline-block;
+    text-align: center; 
+}
+
+#cancelarConfig, #salvarConfig {
+    border: 1px solid black;
+    background-color: rgb(223, 223, 223);
+    color: black;
+}
+
+/* Fim do menu usuario */

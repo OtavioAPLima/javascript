@@ -1,3 +1,4 @@
+/* Container do formulario de recuperar senha */
 .Login {
     margin: 100px auto;
     height: 300px;
@@ -8,6 +9,7 @@
 
 }
 
+/* Margem dos formularios */
 .Forms {
     margin-bottom: 15px;
 }

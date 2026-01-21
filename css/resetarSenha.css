@@ -1,3 +1,4 @@
+/* Container do formulario de resetar senha */
 .resetarSenhaContainer {
     margin: 100px auto;
     height: 300px;
@@ -7,6 +8,7 @@
     border-radius: 10px;
 }
 
+/* Configuracoes do formularios */
 #resetarSenhaForm {
     display: flex;
     flex-direction: column;
@@ -17,18 +19,22 @@
 form input{
     margin-bottom: 10px;
 }
+/* Fim das configuracoes do formularios */
 
+/* Estilo dos requisitos de senha */
 #caractere, #maiuscula, #minuscula, #numero, #especial, #senhasIguais {
     font-size: 12px;
     color: grey;
     margin: 2px 0;
 }
 
+/* Container dos botoes */
 .botoes-container {
     display: flex;
     gap: 10px;
 }
 
+/* Estilo dos campos de senha e confirmar senha */
 .senha, .confirmarSenha {
     margin: auto;
 }

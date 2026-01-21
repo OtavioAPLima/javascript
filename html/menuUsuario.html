@@ -9,8 +9,11 @@
     </head>
 
     <body>
-        <div id="Principal">
+        
 
+        <!-- Conteúdo principal -->
+        <div id="Principal">
+            <!-- Header -->
             <div id="Header">
                 <p class="paragrafoHeader" id="nomeFuncao">Consulta de preço</p>
                 <div id="usuarioLogado">
@@ -19,21 +22,24 @@
                     </div>
                     <p id="nomeUsuario" onclick="user()"></p>
                 </div>
-
             </div>
+            
+            <!-- Menu do usuario -->
             <div id="menuUsuarioDropdown">
-                <button>Perfil</button>
-                <button>Configurações</button>
+                <button onclick="perfil()">Perfil</button>
+                <button onclick="configuracoes()">Configurações</button>
                 <button onclick="logout()">Sair</button>
             </div>
 
+            <!-- Corpo -->
             <div id="Corpo">
+
+                <!-- Alterar opcao de utilidade -->
                 <div id="menuUsuario">
                     <!--Abrir menu de pesquisa-->
                     <button class="botao" onclick="pesquisar()">Pesquisar produtos</button>
                     <!--Abrir menu de cadastro-->
                     <button class="botao" onclick="cadastrar()">Cadastrar produtos</button><br>
-
 
                     <!--Formulário de pesquisa/cadastro-->
                     <form id="PesquisaForm" onsubmit="naoEnviar(event)">
@@ -78,16 +84,70 @@
                             </tr>
                             <tbody id="resultadosTabela">
                             </tbody>
-
                         </table>
-                    </div>
+                    </div>                  
                 </div>
-                <script src="../javaScript/menuUsuario.js"></script>
+
+                <!-- Menu de usuário -->
+                <div id="userConta">
+                    <div id="menuUsuarioContainer">
+                        <!-- Coluna de botões do menu -->
+                        <div class="coluna" id="coluna1">
+                            <button type="button" class="menu" onclick="perfil()">Perfil</button>
+                            <button type="button" class="menu" onclick="configuracoes()">Configurações</button>
+                        </div>
+                        <!-- Conteúdo do menu -->
+                        <div class="coluna" id="coluna2">
+                            <button id="botaoFecharMenu" class="closebtn" onclick="fecharMenu()">&times;</button>
+                            <div id="perfil">
+                                <div class="perfil" id="imagemContainer">
+                                    <img src="../imagens/default.png" alt="Avatar" id="imgAvatarPerfil">    
+                                    <button id="transicao">&#x270E;</button>
+                                </div>
+                                <p class="perfil" id="nomeUsuarioPerfil"></p>
+                                <p class="perfil" id="emailUsuarioPerfil"></p>
+                                <a class="perfil" href="recuperarSenha.html" id="alterarSenha">Alterar senha</a>
+                                <button class="perfil" id="excluirConta" onclick="excluirConta()">Excluir conta</button>
+                            </div>
+                        
+                            <div id="configuracoes">
+                                <p>Tema:</p><br>
+                                <div id="temas">
+                                    <div class="configuracoes" id="temaClaroDiv">
+                                        <input type="radio" class="configuracoes" id="temaClaro" name="tema" value="claro" onchange="alterarTema()">
+                                        <label class="configuracoes" for="temaClaro">Claro</label><br>
+                                    </div>
+                                    <div class="configuracoes" id="temaEscuroDiv">
+                                        <input type="radio" class="configuracoes" id="temaEscuro" name="tema" value="escuro" onchange="alterarTema()">
+                                        <label class="configuracoes" for="temaEscuro">Escuro</label><br>
+                                    </div>
+                                </div>
+
+                                <div class="configuracoes" id="suporte">
+                                    <h3>Suporte</h3><br>
+                                    <p>Envie um email para suporte@exemplo.com</p><br>
+                                    <textarea id="mensagemSuporte" placeholder="Descreva seu problema aqui..."></textarea><br>
+                                    <button id="enviarSuporte" onclick="enviarSuporte()">Enviar</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="botaoSalvarCancelar">
+                            <div id="salvarDiv">
+                                <button id="salvarConfig" onclick="salvarConfig()">Salvar</button>
+                            </div> 
+                            <div id="cancelarDiv">
+                                <button id="cancelarConfig" onclick="cancelarConfig()">Cancelar</button>
+                            </div> 
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <script src="../javaScript/menuUsuario.js">
+                </script>
 
             </div>
-
-            </div>
-            <div id="Footer">
+        <div id="Footer">
         </div>
 
     </body>

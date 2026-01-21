@@ -4,17 +4,22 @@
     margin: 0px;
     font-size: 12px;
     font-family: sans-serif;
+    z-index: 0;
 }
 
+html, body {
+    height: 100%;
+    width: 100%;
+}
 
-
+/* Container do conteudo dentro de body*/
 #Principal {
-    height: auto;
-    width: auto;
+    height: 100%;
+    width: 100%;
     align-items: center;
 }
 
-
+/* Header do site */
 #Header {
     position: relative;
     height: 70px;
@@ -22,23 +27,30 @@
     background-color: rgb(10, 72, 114);
 }
 
+/* Estilo dos parágrafos do header */
 .paragrafoHeader {
     color: rgb(231, 244, 255);
    text-align: left;
 }
 
+/* Corpo do site */
 #Corpo {
     height: 100%;
     width: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
     background-color: rgb(255, 255, 255);
 }
 
+/* Estilo dos formularios */
 .Forms {
     border: 1px;
     border-color: black;
     border-style: solid;
 }
 
+/* Estilo dos botoes */
 button, input[type="submit"] {
     background-color: rgb(10, 72, 114);
     color: rgb(231, 244, 255);
@@ -52,10 +64,17 @@ button, input[type="submit"] {
     gap: 10px;
 }
 
+/* Estilo responsivo */
 @media screen and (max-width: 800px) {
         #Header {
         height: 100px;
         max-width: 100%;
         background-color: rgb(10, 72, 114);
     }
+}
+
+/* Estilo dos links e paragrafos*/
+a, p, h1, h2, h3, h4, h5, h6 {
+    text-decoration: none;
+    color: rgb(231, 244, 255);
 }

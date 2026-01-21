@@ -400,6 +400,12 @@ function alterarTabela(linha) {
 
 // Função para o menu do usuário
 
+const usuarioPerfil = document.getElementById('nomeUsuarioPerfil');
+usuarioPerfil.textContent = sessaoUsuario;
+
+const avatarPerfil = document.getElementById('imgAvatarPerfil');
+avatarPerfil.src = avatarUsuario;
+
 function user() {
     const menuUsuarioDropdown = document.getElementById('menuUsuarioDropdown');
     menuUsuarioDropdown.style.display = 'flex';
@@ -411,4 +417,66 @@ window.onclick = function(event) {
         menuUsuarioDropdown.style.display = 'none';
 
     }
+}
+
+function fecharMenu() {
+    const userConta = document.getElementById('userConta');
+
+    const corpo = document.getElementById('Corpo');
+
+    corpo.style.backgroundColor = "white";
+    userConta.style.display = 'none';
+    
+}
+
+function perfil() {
+    const userConta = document.getElementById('userConta');
+    const corpo = document.getElementById('Corpo');
+    const principal = document.getElementById('Principal');
+    const configuracoes = document.getElementById('configuracoes');
+    const perfil = document.getElementById('perfil');
+
+    principal.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
+    corpo.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
+
+    userConta.style.display = 'block';
+    configuracoes.style.display = 'none';
+    
+    perfil.style.display = 'block';
+
+    document.querySelectorAll('.configuracoes').forEach(config => {
+        config.style.display = 'none';
+    });
+
+    document.querySelectorAll('.perfil').forEach(perfil => {
+        perfil.style.display = 'block';
+    });
+
+    
+}
+
+function configuracoes() {
+    const userConta = document.getElementById('userConta');
+    const corpo = document.getElementById('Corpo');
+    const principal = document.getElementById('Principal');
+    const perfil = document.getElementById('perfil');
+    const configuracoes = document.getElementById('configuracoes');
+
+    corpo.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
+    principal.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
+
+    userConta.style.display = 'block';
+    perfil.style.display = 'none';
+    configuracoes.style.display = 'block';
+
+    document.querySelectorAll('.perfil').forEach(perfil => {
+        perfil.style.display = 'none';
+    });
+
+    document.querySelectorAll('.configuracoes').forEach(config => {
+        config.style.display = 'block';
+    });
+    document.getElementById('temaEscuroDiv').style.display = 'flex';
+    document.getElementById('temaClaroDiv').style.display = 'flex';
+
 }
