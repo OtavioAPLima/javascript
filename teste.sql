@@ -1,11 +1,13 @@
 CREATE DATABASE teste;
 USE teste;
 
-CREATE TABLE Login(
+CREATE TABLE login(
     login_ID int NOT NULL AUTO_INCREMENT,
     usuario varchar(50) NOT NULL UNIQUE,
+    avatar varchar(255),
     senha varchar(255) NOT NULL,
     email varchar(100) NOT NULL UNIQUE,
+    tema boolean DEFAULT FALSE,
     PRIMARY KEY (login_ID)
 );
 

@@ -19,12 +19,13 @@ fetch('../php/getCSRFToken.php', {
         });
     
 // Buscar informações do usuário ao carregar a página
-
 const sessaoUsuario = sessionStorage.getItem('nomeUsuario');
 const avatarUsuario = sessionStorage.getItem('avatarUsuario');
 
+// Preencher nome e avatar do usuário no menu
 document.getElementById('nomeUsuario').textContent = sessaoUsuario;
 document.getElementById('imgAvatar').src = avatarUsuario;
+
 
 
 // Váriaveis de controle para o php
@@ -292,12 +293,9 @@ function naoEnviar(event) {
         .catch(error => console.error('Erro:', error));
 
     }
-
-
-        
+ 
 
 }
-    
     
 
 //Esconder e alterar os formulários
@@ -398,8 +396,26 @@ function alterarTabela(linha) {
     
 }
 
-// Função para o menu do usuário
+// Cadastro e pesquisas
+function cadastroPesquisa() {
+    const cadastroPesquisaContainer = document.getElementById('cadastroPesquisaContainer');
+    const graficosContainer = document.getElementById('graficosContainer');
 
+    graficosContainer.style.display = 'none';
+    cadastroPesquisaContainer.style.display = 'block';
+}
+// Graficos e Logs
+function graficos() {
+    const cadastroPesquisaContainer = document.getElementById('cadastroPesquisaContainer');
+    const graficosContainer = document.getElementById('graficosContainer');
+
+    cadastroPesquisaContainer.style.display = 'none';
+    graficosContainer.style.display = 'block';
+}
+
+
+
+// Função para o menu do usuário
 const usuarioPerfil = document.getElementById('nomeUsuarioPerfil');
 usuarioPerfil.textContent = sessaoUsuario;
 
@@ -424,7 +440,7 @@ function fecharMenu() {
 
     const corpo = document.getElementById('Corpo');
 
-    corpo.style.backgroundColor = "white";
+    corpo.style.backgroundColor = "var(--cor-secundaria)";
     userConta.style.display = 'none';
     
 }
@@ -463,7 +479,6 @@ function configuracoes() {
     const configuracoes = document.getElementById('configuracoes');
 
     corpo.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
-    principal.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
 
     userConta.style.display = 'block';
     perfil.style.display = 'none';
@@ -480,3 +495,128 @@ function configuracoes() {
     document.getElementById('temaClaroDiv').style.display = 'flex';
 
 }
+
+// alterar imagem do perfil
+function alterarImagem() {
+    fetch('../php/alterarImagem.php', {
+        method: 'POST',
+        credentials: 'same-origin'
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        if (data.sucessoAlterarImagem) {
+            alert(data.sucessoAlterarImagem);
+            // Armazenar a imagem do avatar na sessão
+            sessionStorage.setItem('avatarUsuario', data.novaImagem);
+            // Atualizar a imagem exibida
+            document.getElementById('imgAvatar').src = data.novaImagem;
+            document.getElementById('imgAvatarPerfil').src = data.novaImagem;
+        } else if (data.errorAlterarImagem) {
+            alert(data.errorAlterarImagem);
+        }
+    })
+    .catch(error => console.error('Erro:', error));
+}
+
+// Receber email do usuário ao carregar a página
+fetch('../php/menuUsuario.php', {
+    method: 'POST',
+    credentials: 'same-origin',
+    body: new URLSearchParams({
+        action: 'emailUsuario'
+    })
+})
+.then(response => response.json())
+.then(data => {
+    
+    if (data.emailUsuario) {
+        document.getElementById('emailUsuarioPerfil').textContent = data.emailUsuario;
+    } else if (data.errorEmailUsuario) {
+        alert(data.errorEmailUsuario);
+    }
+})
+.catch(error => console.error('Erro:', error));
+
+// Alterar tema do site
+// Valores padrão (tema claro)
+const claro = {
+    corPrincipal: 'rgb(10, 72, 114)',
+    corSecundaria: 'rgb(250, 253, 255)'
+};
+
+// Valores tema escuro
+const escuro = {
+    corPrincipal: 'rgb(32, 32, 32)',
+    corSecundaria: 'rgb(64, 64, 64)'
+};
+
+// Função para aplicar o tema
+function aplicarTema(tema) {
+    console.log('Aplicando tema:', tema);
+    const root = document.documentElement;
+    
+    if (tema === "claro" || tema === "0" || tema === 0 || tema === null) {
+        // Tema claro
+        console.log('Aplicando tema claro');
+        root.style.setProperty('--cor-principal', claro.corPrincipal);
+        root.style.setProperty('--cor-secundaria', claro.corSecundaria);
+        root.style.setProperty('--preto-texto', 'black');
+        root.style.setProperty('--branco-texto', 'white');
+        const temaClaro = document.getElementById('temaClaro');
+        if (temaClaro) {
+            temaClaro.checked = true;
+        }
+        
+    } else if (tema === "escuro" || tema === "1" || tema === 1) {
+        // Tema escuro
+        console.log('Aplicando tema escuro');
+        root.style.setProperty('--cor-principal', escuro.corPrincipal);
+        root.style.setProperty('--cor-secundaria', escuro.corSecundaria);
+        root.style.setProperty('--preto-texto', 'white');
+        root.style.setProperty('--branco-texto', 'black');
+        const temaEscuro = document.getElementById('temaEscuro');
+        if (temaEscuro) {
+            temaEscuro.checked = true;
+        }
+    }
+    
+}
+
+// Aplicar tema ao carregar a página
+let temaUsuario = sessionStorage.getItem('temaUsuario');
+aplicarTema(temaUsuario);
+
+
+function alterarTema() {
+    const radioSelecionado = document.querySelector('input[name="tema"]:checked');
+    const tema = radioSelecionado.value;
+    
+    // Aplicar o tema imediatamente ANTES de fazer o fetch
+    aplicarTema(tema);
+    sessionStorage.setItem('temaUsuario', tema);
+    
+    // Enviar para o servidor
+    fetch('../php/menuUsuario.php', {
+        method: 'POST',
+        credentials: 'same-origin',
+        body: new URLSearchParams({
+            tema: tema,
+            action: 'alterarTema'
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Resposta do servidor:', data);
+        if (data.sucessoAlterarTema) {
+            console.log(data.sucessoAlterarTema);
+        } else if (data.errorAlterarTema) {
+            console.error(data.errorAlterarTema);
+        }
+    })
+    .catch(error => console.error('Erro ao alterar tema:', error));
+}
+
+
+
+

@@ -1,8 +1,11 @@
 <?php
+// Prevenir cache
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 header("Expires: 0");
 
+// Iniciar sessão segura
+ini_set('session.use_strict_mode', 1);
 ini_set('session.cookie_httponly', 1);
 ini_set('session.cookie_secure', 1);
 ini_set('session.cookie_samesite', 'Strict');
@@ -70,9 +73,10 @@ if ($result->num_rows == 1) {
         session_regenerate_id(true);
         $_SESSION['usuario'] = $usuario;
         
-        // Buscar avatar do usuário (se existir na tabela)
+        // Buscar avatar do usuário (se existir na tabela) e tema de usuario
         $avatar = '../imagens/default.png'; // Caminho padrão
-        $stmt_avatar = $conn->prepare("SELECT avatar FROM login WHERE usuario=?");
+        $_SESSION['avatar'] = $avatar;
+        $stmt_avatar = $conn->prepare("SELECT avatar, tema FROM login WHERE usuario=?");
         $stmt_avatar->bind_param("s", $usuario);
         $stmt_avatar->execute();
         $result_avatar = $stmt_avatar->get_result();
@@ -82,7 +86,7 @@ if ($result->num_rows == 1) {
                 $avatar = $row_avatar['avatar']; // Usar o caminho diretamente
             }
         }
-        $_SESSION['avatar'] = $avatar;
+        $_SESSION['tema'] = $row_avatar['tema'];
         $stmt_avatar->close();
         
         $stmt->close();
@@ -95,6 +99,7 @@ if ($result->num_rows == 1) {
                 'sucesso' => true,
                 'usuario' => $usuario,
                 'avatar' => $avatar,
+                'tema' => $_SESSION['tema'],
                 'redirect' => '/html/menuUsuario.html'
             ]);
             exit;

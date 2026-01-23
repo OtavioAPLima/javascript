@@ -7,6 +7,13 @@
     z-index: 0;
 }
 
+:root {
+    --cor-principal: rgb(10, 72, 114);
+    --cor-secundaria: rgb(250, 253, 255);
+    --branco-texto: white;
+    --preto-texto: black;
+}
+
 html, body {
     height: 100%;
     width: 100%;
@@ -17,6 +24,7 @@ html, body {
     height: 100%;
     width: 100%;
     align-items: center;
+    position: relative;
 }
 
 /* Header do site */
@@ -24,12 +32,12 @@ html, body {
     position: relative;
     height: 70px;
     max-width: 100%;
-    background-color: rgb(10, 72, 114);
+    background-color: var(--cor-principal);
 }
 
 /* Estilo dos parágrafos do header */
 .paragrafoHeader {
-    color: rgb(231, 244, 255);
+    color: var(--branco-texto);
    text-align: left;
 }
 
@@ -37,10 +45,10 @@ html, body {
 #Corpo {
     height: 100%;
     width: 100%;
-    position: relative;
+    position: absolute;
     display: flex;
     justify-content: center;
-    background-color: rgb(255, 255, 255);
+    background-color: var(--cor-secundaria);
 }
 
 /* Estilo dos formularios */
@@ -52,10 +60,9 @@ html, body {
 
 /* Estilo dos botoes */
 button, input[type="submit"] {
-    background-color: rgb(10, 72, 114);
-    color: rgb(231, 244, 255);
+    background-color: var(--cor-principal);
+    color: var(--branco-texto);
     padding: 5px;
-    margin-top: 10px;
     cursor: pointer;
 }
 
@@ -69,12 +76,15 @@ button, input[type="submit"] {
         #Header {
         height: 100px;
         max-width: 100%;
-        background-color: rgb(10, 72, 114);
+        background-color: var(--cor-principal);
     }
 }
 
 /* Estilo dos links e paragrafos*/
 a, p, h1, h2, h3, h4, h5, h6 {
     text-decoration: none;
-    color: rgb(231, 244, 255);
+}
+
+#nomeFuncao {
+    color: aliceblue;
 }

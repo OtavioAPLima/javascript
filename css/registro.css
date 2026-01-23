@@ -1,7 +1,7 @@
 /* Container do formulario de registro */
 .Login {
-    height: 300px;
-    width: 300px;
+    height: fit-content;
+    width: fit-content;
     background-color: rgb(197, 197, 197);
     margin: 100px auto;
     padding: 10px;
@@ -31,7 +31,7 @@ input[type="submit"] {
 }
 
 /* Estilo dos requisitos de senha */
-#caractere, #maiuscula, #minuscula, #numero, #especial {
+#caractere, #maiuscula, #minuscula, #numero, #especial, #senhaIgual {
     font-size: 14px;
     color: grey;
     margin: 2px 0;

@@ -9,13 +9,16 @@
     </head>
 
     <body>
-        
 
         <!-- Conteúdo principal -->
         <div id="Principal">
             <!-- Header -->
             <div id="Header">
                 <p class="paragrafoHeader" id="nomeFuncao">Consulta de preço</p>
+                <div id="opcoesContainer">
+                    <button class="botaoHeader" onclick="cadastroPesquisa()">Cadastro e Pesquisa</button>
+                    <button class="botaoHeader" onclick="graficos()">Gráficos</button>
+                </div>
                 <div id="usuarioLogado">
                     <div id="avatar" onclick="user()">
                         <img src="../imagens/default.png" alt="Avatar" id="imgAvatar">
@@ -33,59 +36,65 @@
 
             <!-- Corpo -->
             <div id="Corpo">
-
-                <!-- Alterar opcao de utilidade -->
                 <div id="menuUsuario">
-                    <!--Abrir menu de pesquisa-->
-                    <button class="botao" onclick="pesquisar()">Pesquisar produtos</button>
-                    <!--Abrir menu de cadastro-->
-                    <button class="botao" onclick="cadastrar()">Cadastrar produtos</button><br>
-
-                    <!--Formulário de pesquisa/cadastro-->
-                    <form id="PesquisaForm" onsubmit="naoEnviar(event)">
-
-                        <input type="hidden" name="csrf_token" id="csrf_token" value="">
-
-                        <div id="produto_ID_Div">
-                            <label for="produto_ID_Input">Produto ID:</label>
-                            <input type="number" id="produto_ID_Input" class="Forms" name="produto_ID" placeholder="ID">
+                    <div id="cadastroPesquisaContainer">
+                        <div id="botaoContainer">
+                            <!-- Alterar opcao de utilidade -->
+                            <!--Abrir menu de pesquisa-->
+                            <button class="botao" onclick="pesquisar()">Pesquisar produtos</button>
+                            <!--Abrir menu de cadastro-->
+                            <button class="botao" onclick="cadastrar()">Cadastrar produtos</button><br>
                         </div>
-                        <div>
-                            <label for="nomeProduto">Nome do Produto:</label>
-                            <input type="text" id="nomeProduto" class="Forms" name="nomeProduto" placeholder="Nome do Produto">
-                        </div>
-                        <div>
-                            <label for="categoriaProduto">Categoria:</label>
-                            <input list="categorias" id="categoriaProduto" class="Forms" name="categoriaProduto" placeholder="Categoria">
-                            <datalist id="categorias">
+                        <!--Formulário de pesquisa/cadastro-->
+                        <form id="PesquisaForm" onsubmit="naoEnviar(event)">
 
-                            </datalist>
-                        </div>
-                        <div>
-                            <label for="precoProduto">Preço:</label>
-                            <input type="text" id="precoProduto" class="Forms" name="precoProduto" placeholder="Preço">
-                        </div>
-                        <div id="quantidade_Produto_Div">
-                            <label for="quantidade_Produto_Input">Quantidade:</label>
-                            <input type="number" id="quantidade_Produto_Input" class="Forms" name="quantidadeProduto">
-                        </div><br>
-                        <input type="submit" id="botaoForms" class="inputForm" value="Consultar Produtos">
-                    </form>
+                            <input type="hidden" name="csrf_token" id="csrf_token" value="">
 
-                    <!--Resultados da pesquisa-->
-                    <div id="resultados"><br>
-                        <table>
-                            <tr>
-                                <th class="ID">ID</th>
-                                <th class="Nome">Nome</th>
-                                <th class="Categoria">Categoria</th>
-                                <th class="Preço">Preço</th>
-                                <th class="Quantidade">Quantidade</th>
-                            </tr>
-                            <tbody id="resultadosTabela">
-                            </tbody>
-                        </table>
-                    </div>                  
+                            <div id="produto_ID_Div">
+                                <label for="produto_ID_Input">Produto ID:</label>
+                                <input type="number" id="produto_ID_Input" class="Forms" name="produto_ID" placeholder="ID">
+                            </div>
+                            <div>
+                                <label for="nomeProduto">Nome do Produto:</label>
+                                <input type="text" id="nomeProduto" class="Forms" name="nomeProduto" placeholder="Nome do Produto">
+                            </div>
+                            <div>
+                                <label for="categoriaProduto">Categoria:</label>
+                                <input list="categorias" id="categoriaProduto" class="Forms" name="categoriaProduto" placeholder="Categoria">
+                                <datalist id="categorias">
+
+                                </datalist>
+                            </div>
+                            <div>
+                                <label for="precoProduto">Preço:</label>
+                                <input type="text" id="precoProduto" class="Forms" name="precoProduto" placeholder="Preço">
+                            </div>
+                            <div id="quantidade_Produto_Div">
+                                <label for="quantidade_Produto_Input">Quantidade:</label>
+                                <input type="number" id="quantidade_Produto_Input" class="Forms" name="quantidadeProduto">
+                            </div><br>
+                            <input type="submit" id="botaoForms" class="inputForm" value="Consultar Produtos">
+                        </form>
+
+                        <!--Resultados da pesquisa-->
+                        <div id="resultados"><br>
+                            <table>
+                                <tr>
+                                    <th class="ID">ID</th>
+                                    <th class="Nome">Nome</th>
+                                    <th class="Categoria">Categoria</th>
+                                    <th class="Preço">Preço</th>
+                                    <th class="Quantidade">Quantidade</th>
+                                </tr>
+                                <tbody id="resultadosTabela">
+                                </tbody>
+                            </table>
+                        </div>                  
+                    </div>
+                    <div id="graficosContainer">
+                        <!-- Gráficos serao inseridos aqui -->
+                        <!-- Logs serao inseridos aqui-->
+                    </div>
                 </div>
 
                 <!-- Menu de usuário -->
@@ -100,12 +109,14 @@
                         <div class="coluna" id="coluna2">
                             <button id="botaoFecharMenu" class="closebtn" onclick="fecharMenu()">&times;</button>
                             <div id="perfil">
-                                <div class="perfil" id="imagemContainer">
+                                <div class="perfil" id="imagemContainer" onclick="alterarImagem">
                                     <img src="../imagens/default.png" alt="Avatar" id="imgAvatarPerfil">    
                                     <button id="transicao">&#x270E;</button>
                                 </div>
-                                <p class="perfil" id="nomeUsuarioPerfil"></p>
-                                <p class="perfil" id="emailUsuarioPerfil"></p>
+                                <p class="perfil">Nome:</p>
+                                <p class="perfil" id="nomeUsuarioPerfil" onclick="alterarNome()"></p><br>
+                                <p class="perfil">E-mail:</p>
+                                <p class="perfil" id="emailUsuarioPerfil" onclick="alterarEmail()"></p><br>
                                 <a class="perfil" href="recuperarSenha.html" id="alterarSenha">Alterar senha</a>
                                 <button class="perfil" id="excluirConta" onclick="excluirConta()">Excluir conta</button>
                             </div>

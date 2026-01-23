@@ -122,6 +122,7 @@
                     // Armazenar dados no sessionStorage
                     sessionStorage.setItem('nomeUsuario', data.usuario);
                     sessionStorage.setItem('avatarUsuario', data.avatar);
+                    sessionStorage.setItem('temaUsuario', data.tema);
                     
                     if (sessionStorage.getItem('avatarUsuario') === null) {
                         sessionStorage.setItem('avatarUsuario', '../imagens/default.png');

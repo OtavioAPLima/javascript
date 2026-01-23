@@ -15,4 +15,5 @@ Conteúdo:
 -Cadastro de Produtos;
 -Alteração de Produtos;
 -Exclusão de Produtos.
+-recuperação de senha por e-mail(mailhog)
 

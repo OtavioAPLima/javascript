@@ -1,15 +1,16 @@
 <?php
-// Habilitar exibição de erros temporariamente para debug
+// Habilitar exibicao de erros temporariamente para debug
 ini_set('display_errors', 1);
 ini_set('log_errors', 1);
 error_reporting(E_ALL);
 
-// Verificar sessão ANTES de qualquer output
+// Verificar sessao ANTES de qualquer output
 ini_set('session.cookie_httponly', 1);
 ini_set('session.cookie_secure', 1);
 ini_set('session.cookie_samesite', 'Strict');
 session_start();
 
+// Verificar sessao do usuario
 if (!isset($_SESSION['usuario'])) {
     header('Content-Type: application/json');
     echo json_encode(["erro" => "Sessão expirada ou usuário não autenticado.", "redirect" => "/html/index.html"]);
@@ -24,36 +25,39 @@ $port = 3306;
 
 $conn = new mysqli($servername, $username, $password, $dbname, $port);
 
+// Verificar conexao
 if ($conn->connect_error) {
     header('Content-Type: application/json');
     echo json_encode(["erro" => "Erro de conexão: " . $conn->connect_error]);
     exit;
 }
 
+// Verificar se a ação foi especificada
 if (!isset($_POST['action'])) {
     header('Content-Type: application/json');
     echo json_encode(["erro" => "Ação não especificada."]);
     exit;
 }
 
+// Função para proteção contra XSS
 function jsProtection($valor) {
     return htmlspecialchars($valor, ENT_QUOTES, 'UTF-8');
 }
 
-
+// Recebendo dados do formulário
 $action = $_POST['action'];
 $produto_ID = isset($_POST['produto_ID']) ? $_POST['produto_ID'] : null;
 $nomeProduto = isset($_POST['nomeProduto']) ? $_POST['nomeProduto'] : null;
 $quantidadeProduto = isset($_POST['quantidadeProduto']) ? $_POST['quantidadeProduto'] : null;       
 $categoriaProduto = isset($_POST['categoriaProduto']) ? $_POST['categoriaProduto'] : null;
 $precoProduto = isset($_POST['precoProduto']) ? $_POST['precoProduto'] : null;
-
-
+$tema = isset($_POST['tema']) ? $_POST['tema'] : null;
 
 
 
 // Recebendo valor de ação e executando pesquisa, cadastro ou alteração
 switch($action) {
+    // Exibir todos os produtos
     case 'exibirTodos':
         $stmt = $conn->prepare("SELECT * FROM produtos");
         $stmt->execute();
@@ -73,7 +77,8 @@ switch($action) {
         echo json_encode($produtos);
         
         $stmt->close();
-        break;
+        exit;
+    // Pesquisar produtos
     case 'pesquisar':
         if (empty($nomeProduto) && empty($categoriaProduto) && empty($produto_ID) && empty($precoProduto) && empty($quantidadeProduto)) {
             header('Content-Type: application/json');
@@ -101,7 +106,8 @@ switch($action) {
             
             $stmt->close();
         }
-        break;
+        exit;
+    // Cadastrar produto
     case 'cadastrar':
         if (!is_numeric($quantidadeProduto) || $quantidadeProduto < 0) {
         echo json_encode(["errorCadastro" => "Quantidade inválida."]);
@@ -132,7 +138,8 @@ switch($action) {
                 exit;
             }
         }
-        break;
+        exit;
+    // Alterar produto
     case 'alterar':
         $stmt = $conn->prepare("SELECT * FROM produtos WHERE produto_ID=?");
         $stmt->bind_param("i", $produto_ID);
@@ -165,7 +172,8 @@ switch($action) {
                 exit;
                 }
             }
-        break;
+        exit;
+    // Excluir produto
     case 'excluir':
         if (empty($produto_ID)) {
             header("Content-Type: application/json");
@@ -198,12 +206,59 @@ switch($action) {
             echo json_encode(["errorExcluir" => "Erro ao excluir produto."]);
             $stmt->close();
         }
-        break;
+        exit;
+    // Obter email do usuario
+    case 'emailUsuario':
+        $user = $_SESSION['usuario'];
+        $stmt = $conn->prepare("SELECT email FROM login WHERE usuario=?");
+        $stmt->bind_param("s", $user);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($row = $result->fetch_assoc()) {
+            $emailUsuario = jsProtection($row['email']);
+            header('Content-Type: application/json');
+            echo json_encode(["emailUsuario" => $emailUsuario]);
+        } else {
+            header('Content-Type: application/json');
+            echo json_encode(["errorEmailUsuario" => "Usuário não encontrado."]);
+        }
+        $stmt->close();
+        exit;
+    // Alterar tema do usuario
+    case 'alterarTema':
+        $user = $_SESSION['usuario'];
+        if ($tema == 'claro'){
+            $stmt = $conn->prepare("UPDATE login SET tema = 0 WHERE usuario=?");
+            $stmt->bind_param("s", $user);
+            $_SESSION['tema'] = 0;
+        } else if ($tema == 'escuro'){
+            $stmt = $conn->prepare("UPDATE login SET tema = 1 WHERE usuario=?");
+            $stmt->bind_param("s", $user);
+            $_SESSION['tema'] = 1;
+        } else {
+            header("Content-Type: application/json");
+            echo json_encode(["errorTema" => "Tema inválido."]);
+            exit;
+        }
+        if ($stmt->execute()) {
+            header("Content-Type: application/json");
+            echo json_encode(["sucessoTema" => "Tema alterado com sucesso."]);
+            $stmt->close();
+        } else {
+            header("Content-Type: application/json");
+            echo json_encode(["errorTema" => "Erro ao alterar tema: " . $stmt->error]);
+            $stmt->close();
+            exit;
+        }
+        exit;;
+    // Acao invalida
     default:
         header('Content-Type: application/json');
         echo json_encode(["erro" => "Ação inválida."]);
         exit;
-        break;
 }
+
+// Fechar conexao
 $conn->close();
 ?>

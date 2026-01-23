@@ -15,7 +15,11 @@
 }
 
 /* Estilo do link de registro */
-#registro {
+.botoes-container {
     margin-top: 10px;
+}
+
+#formLogin a {
+    color: var(--preto-texto);
 }
 

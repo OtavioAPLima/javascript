@@ -1,4 +1,14 @@
 /* Container dos formularios*/
+#cadastroPesquisaContainer {
+    display: block;
+}
+
+#graficos {
+    display: none;
+    justify-content: center;
+    gap: 20px;
+}
+
 #menuUsuario {
     position: absolute;
     display: block;
@@ -16,10 +26,17 @@
 .botao {
     padding: 10px 20px;
     border: 1px solid black;
-    background-color: rgba(218, 255, 254, 0.648);
-    color: black;
-    display: inline-block;
-    margin: 10px 5px;
+    background-color: var(--cor-principal);
+    color: aliceblue;
+    display: flex;
+    margin: 10px;
+    width: fit-content;
+}
+
+#botaoContainer {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 #PesquisaForm {
@@ -57,6 +74,7 @@
 #botaoForms {
     display: none;
     padding: 5px;
+    color: aliceblue;
 }
 
 
@@ -66,7 +84,15 @@
 
 .inputForm {
     border: 1px solid black;
-    background-color: rgba(122, 255, 251, 0.648);
+    background-color: var(--cor-principal);
+    
+    cursor: pointer;
+}
+
+#resultadosTabela tr td button{
+    background-color: var(--cor-principal);
+    color: aliceblue;
+    border: 1px solid black;
     cursor: pointer;
 }
 /* Fim dos formularios de controle de estoque*/
@@ -143,7 +169,7 @@ table, th, td {
 #menuUsuarioDropdown {
     display: none;
     position: absolute;
-    background-color: rgb(10, 72, 114);
+    background-color: var(--cor-principal);
     min-width: 148px;
     min-height: fit-content;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
@@ -173,7 +199,7 @@ table, th, td {
     z-index: 2;
     width: 400px;
     height: 400px;
-    background-color: rgb(233, 233, 233);
+    background-color: var(--cor-secundaria);
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     margin: 50px 0px;
 }
@@ -186,7 +212,7 @@ table, th, td {
     font-size: 30px;
     background: none;
     border: none;
-    color: black;
+    color: var(--preto-texto);
     cursor: pointer;
     z-index: 4;
 }
@@ -197,7 +223,7 @@ table, th, td {
     align-items: center;
     justify-content: center;
     z-index: inherit;
-    color: black;
+    color: var(--preto-texto);
     background-color: transparent;
     width: 100%;
     
@@ -211,7 +237,7 @@ table, th, td {
 }
 
 #configuracoes p, #perfil p , .configuracoes p , .perfil p , #configuracoes label , #perfil label , .configuracoes label , .perfil label{
-    color: black;
+    color: var(--preto-texto);
 }
 
 #menuUsuarioContainer {
@@ -239,8 +265,8 @@ table, th, td {
 }
 
 #coluna1 button:hover, #coluna2 button:hover {
-    color: rgb(231, 244, 255);
-    background-color: rgb(10, 72, 114);
+    color: aliceblue;
+    background-color: var(--cor-principal);
 }
 
 /* Perfil */
@@ -251,21 +277,31 @@ table, th, td {
 }
 
 #alterarSenha{
-    color: black;
+    color: var(--preto-texto);
     width: fit-content;
+    padding-left: 5px;
+}
+
+#alterarSenha:hover{
+    background-color: transparent;
+    text-decoration: underline;
 }
 
 #excluirConta{
-    color: black;
+    color: var(--preto-texto);
     width: fit-content;
     margin-top: 10px;
     background-color: transparent;
 }
 
 #nomeUsuarioPerfil, #emailUsuarioPerfil {
-    margin-top: 10px;
-    text-align: center;
-    align-items: center;
+    margin-top: 5px;
+    color: var(--preto-texto);
+}
+
+#nomeUsuarioPerfil:hover {
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 #imagemContainer {
@@ -293,15 +329,15 @@ table, th, td {
     margin: 0;
     transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
-    color: white;
+    color: var(--branco-texto);
     font-size: 16px;
-    padding: 10px 15px;
     border: none;
     cursor: pointer;
+    padding: 5px 5px;
     border-radius: 5px;
     transition: .5s ease;
     text-align: center;
-    background-color: transparent;
+    background-color: var(--cor-principal);
 }
 
 #imagemContainer:hover #imgAvatarPerfil {
@@ -323,13 +359,21 @@ table, th, td {
 }
 
 #temaEscuroDiv, #temaClaroDiv {
-    margin-left: 5px;
+    margin: 5px 5px 0 0;
     display: flex;
 }
 
 #suporte h3{
     margin-top: 40px;
-    color: black;
+    color: var(--preto-texto);
+}
+
+#enviarSuporte {
+    border: 1px solid black;
+    background-color: var(--cor-secundaria);
+    color: var(--preto-texto);
+    padding: 5px 10px;
+    cursor: pointer;
 }
 
 /* Fim Configurações */
@@ -352,8 +396,8 @@ table, th, td {
 
 #cancelarConfig, #salvarConfig {
     border: 1px solid black;
-    background-color: rgb(223, 223, 223);
-    color: black;
+    background-color: var(--cor-secundaria);
+    color: var(--preto-texto);
 }
 
 /* Fim do menu usuario */

@@ -35,7 +35,8 @@
                     <p id="maiuscula">Ao menos uma letra maiúscula</p>
                     <p id="minuscula">Ao menos uma letra minúscula</p>
                     <p id="numero">Ao menos um número</p>
-                    <p id="especial">Ao menos um caractere especial (!@#$%^&*)</p><br>
+                    <p id="especial">Ao menos um caractere especial (!@#$%^&*)</p>
+                    <p id="senhaIgual">Senhas devem ser iguais</p>
 
                     <label for="senha2">Confirmar senha:</label><br>
                     <input type="password" class="Forms" id="senha2" name="senha2" placeholder="12345678"><br>
@@ -105,6 +106,13 @@
                         }   else {
                             senha.style.borderColor = 'rgb(204, 204, 204)';
                             document.getElementById('especial').style.color = 'green';
+                        }
+                        if (senha.value !== senha2.value) {
+                            senha2.style.borderColor = 'red';
+                            document.getElementById('senhaIgual').style.color = 'red';
+                        }   else {
+                            senha2.style.borderColor = 'rgb(204, 204, 204)';
+                            document.getElementById('senhaIgual').style.color = 'green';
                         }
                         
                     });
