@@ -54,63 +54,52 @@ $precoProduto = isset($_POST['precoProduto']) ? str_replace(',', '.', trim($_POS
 $tema = isset($_POST['tema']) ? $_POST['tema'] : null;
 $offset = isset($_POST['offset']) ? (int)$_POST['offset'] : 0;
 
-$filtroPrecoMaximo = isset($_POST['precoMaximo']) ? str_replace(',', '.', trim($_POST['precoMaximo'])) : null;
-$filtroPrecoMinimo = isset($_POST['precoMinimo']) ? str_replace(',', '.', trim($_POST['precoMinimo'])) : null;
-$filtroQuantidadeMaior = isset($_POST['quantidadeMaior']) ? $_POST['quantidadeMaior'] : null;
-$filtroQuantidadeMenor = isset($_POST['quantidadeMenor']) ? $_POST['quantidadeMenor'] : null;
+$filtroPrecoMaximo = isset($_POST['filtroPrecoMaximo']) ? str_replace(',', '.', trim($_POST['filtroPrecoMaximo'])) : null;
+$filtroPrecoMinimo = isset($_POST['filtroPrecoMinimo']) ? str_replace(',', '.', trim($_POST['filtroPrecoMinimo'])) : null;
+$filtroQuantidadeMaior = isset($_POST['filtroQuantidadeMaior']) ? $_POST['filtroQuantidadeMaior'] : null;
+$filtroQuantidadeMenor = isset($_POST['filtroQuantidadeMenor']) ? $_POST['filtroQuantidadeMenor'] : null;
 
 $filtros = [
-    'precoMaximo' => $filtroPrecoMaximo,
-    'precoMinimo' => $filtroPrecoMinimo,
-    'quantidadeMaior' => $filtroQuantidadeMaior,
-    'quantidadeMenor' => $filtroQuantidadeMenor
+    'filtroPrecoMaximo' => $filtroPrecoMaximo,
+    'filtroPrecoMinimo' => $filtroPrecoMinimo,
+    'filtroQuantidadeMaior' => $filtroQuantidadeMaior,
+    'filtroQuantidadeMenor' => $filtroQuantidadeMenor,
 ];
 
 $filtrosSQL = [
-    'precoMaximo' => "precoProduto <= ?",
-    'precoMinimo' => "precoProduto >= ?",
-    'quantidadeMaior' => "quantidadeProduto >= ?",
-    'quantidadeMenor' => "quantidadeProduto <= ?",
+    'filtroPrecoMaximo' => "precoProduto <= ?",
+    'filtroPrecoMinimo' => "precoProduto >= ?",
+    'filtroQuantidadeMaior' => "quantidadeProduto >= ?",
+    'filtroQuantidadeMenor' => "quantidadeProduto <= ?",
 ];
 // Recebendo valor de ação e executando pesquisa, cadastro ou alteração
 switch($action) {
     // Exibir todos os produtos
     case 'exibirTodos':
-        $condicoesSQL = [];
-        $valoresSQL = [];
-
-        if (!empty(array_filter($filtros))) {
-            foreach (array_filter($filtros) as $chave => $valor) {
-                $condicoesSQL[] = $filtrosSQL[$chave];
-                $valoresSQL[] = $valor;       
-            };
-            $whereSQL = " WHERE " . implode(" AND ", $condicoesSQL);
-            $query = "SELECT * FROM produtos" . $whereSQL . " LIMIT 5 OFFSET ?";
-            $stmt = $conn->prepare($query);
-            $tipos = str_repeat("d", count($valoresSQL)) . "i";
-            $valoresSQL[] = $offset;
-            $stmt->bind_param($tipos, ...$valoresSQL);
-
-            $stmtCount = $conn->prepare("SELECT COUNT(*) as total FROM produtos");
-            $stmtCount->execute();
-            $resultCount = $stmtCount->get_result();
-            $totalProdutos = $resultCount->fetch_assoc()['total'];
-            
-        } else {
+        
+        // Funções para consulta com limite e contagem total
+        function queryOffset(){
+            global $conn, $offset;
             $stmt = $conn->prepare("SELECT * FROM produtos LIMIT 5 OFFSET ?");
-            $offset = isset($_POST['offset']) ? (int)$_POST['offset'] : 0;
             $stmt->bind_param("i", $offset);
-
-            $stmtCount = $conn->prepare("SELECT COUNT(*) as total FROM produtos");
-            $stmtCount->execute();
-            $resultCount = $stmtCount->get_result();
-            $totalProdutos = $resultCount->fetch_assoc()['total'];
-            
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $stmt->close();
+            return $result;
         }
         
-        $stmtCount->close();
-        $stmt->execute();
-        $result = $stmt->get_result();
+        function queryCount(){
+            global $conn;
+            $stmtCount = $conn->prepare("SELECT COUNT(*) as total FROM produtos");
+            $stmtCount->execute();
+            $resultCount = $stmtCount->get_result();
+            $totalProdutos = $resultCount->fetch_assoc()['total'];
+            $stmtCount->close();
+            return $totalProdutos;
+        }
+        
+        $totalProdutos = queryCount();
+        $result = queryOffset();
         
         header('Content-Type: application/json');
         $produtos = [];
@@ -124,8 +113,7 @@ switch($action) {
             ];
         }
         echo json_encode(["produtos" => $produtos, "totalProdutos" => $totalProdutos]);
-        
-        $stmt->close();
+
         exit;
     // Pesquisar produtos
     case 'pesquisar':

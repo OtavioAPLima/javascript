@@ -202,13 +202,13 @@ function exibirTabelas() {
         total = totalProdutos;
         produtosRecebidos = produtos;
         totalPaginas = totalProdutos ? Math.ceil(totalProdutos / itensPorPagina) : 1;
+        document.getElementById('paginaAtual').textContent = paginaAtual;
         return produtos;
     })
     .catch(error => console.error('Erro:', error));
 }
 
 // Paginação
-
 
 function primeiraPagina() {
     paginaAtual = 1;
@@ -238,7 +238,6 @@ function anteriorPagina() {
         exibirTabelas();
     }
 }
-
 
 
 
@@ -377,15 +376,15 @@ document.getElementById('PesquisaForm').style.display = 'none';
 function aplicarFiltros() {
     let loadForm = new FormData();
     let parametros = {
-        precoMinimo: document.getElementById('filtroPrecoMinimo').value,
-        precoMaximo: document.getElementById('filtroPrecoMaximo').value,
-        quantidadeMenor: document.getElementById('filtroQuantidadeMenor').value,
-        quantidadeMaior: document.getElementById('filtroQuantidadeMaior').value
+        filtroPrecoMinimo: document.getElementById('filtroPrecoMinimo').value,
+        filtroPrecoMaximo: document.getElementById('filtroPrecoMaximo').value,
+        filtroQuantidadeMenor: document.getElementById('filtroQuantidadeMenor').value,
+        filtroQuantidadeMaior: document.getElementById('filtroQuantidadeMaior').value
     };  
     Object.entries(parametros).forEach(([key, value]) => {
         loadForm.append(key, value);
     });
-    loadForm.append('action', 'exibirTodos');
+    loadForm.append('action', 'exibirTodosFiltros');
 
     fetch('../php/menuUsuario.php', {
         method: 'POST',
@@ -395,7 +394,7 @@ function aplicarFiltros() {
     .then(response => response.json())
     .then(produtos => {
         console.log(produtos);
-        exibirTabelas()
+        exibirTabelas();
     });   
 }
 
