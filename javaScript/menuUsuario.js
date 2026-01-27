@@ -324,15 +324,9 @@ function naoEnviar(event) {
             console.log(data);
             
             if (data.sucessoCadastro) {
-                document.getElementById("resultadosTabela").innerHTML = '';
-                exibirTabelas().then((produtos) => {
-                    produtos.forEach(p => {
-                        const resultadosTabela = document.getElementById("resultadosTabela");
-                        resultadosTabela.removeChild(resultadosTabela)
-                        
-                    });
-
-                });
+                paginaAtual = Math.ceil((total + 1) / itensPorPagina);
+                offset = (paginaAtual - 1) * itensPorPagina;
+                exibirTabelas();
                 
             alert(data.sucessoCadastro);
             } else if (data.errorCadastro) {
