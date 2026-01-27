@@ -50,16 +50,65 @@ $produto_ID = isset($_POST['produto_ID']) ? $_POST['produto_ID'] : null;
 $nomeProduto = isset($_POST['nomeProduto']) ? $_POST['nomeProduto'] : null;
 $quantidadeProduto = isset($_POST['quantidadeProduto']) ? $_POST['quantidadeProduto'] : null;       
 $categoriaProduto = isset($_POST['categoriaProduto']) ? $_POST['categoriaProduto'] : null;
-$precoProduto = isset($_POST['precoProduto']) ? $_POST['precoProduto'] : null;
+$precoProduto = isset($_POST['precoProduto']) ? str_replace(',', '.', trim($_POST['precoProduto'])) : null;
 $tema = isset($_POST['tema']) ? $_POST['tema'] : null;
+$offset = isset($_POST['offset']) ? (int)$_POST['offset'] : 0;
 
+$filtroPrecoMaximo = isset($_POST['precoMaximo']) ? str_replace(',', '.', trim($_POST['precoMaximo'])) : null;
+$filtroPrecoMinimo = isset($_POST['precoMinimo']) ? str_replace(',', '.', trim($_POST['precoMinimo'])) : null;
+$filtroQuantidadeMaior = isset($_POST['quantidadeMaior']) ? $_POST['quantidadeMaior'] : null;
+$filtroQuantidadeMenor = isset($_POST['quantidadeMenor']) ? $_POST['quantidadeMenor'] : null;
 
+$filtros = [
+    'precoMaximo' => $filtroPrecoMaximo,
+    'precoMinimo' => $filtroPrecoMinimo,
+    'quantidadeMaior' => $filtroQuantidadeMaior,
+    'quantidadeMenor' => $filtroQuantidadeMenor
+];
 
+$filtrosSQL = [
+    'precoMaximo' => "precoProduto <= ?",
+    'precoMinimo' => "precoProduto >= ?",
+    'quantidadeMaior' => "quantidadeProduto >= ?",
+    'quantidadeMenor' => "quantidadeProduto <= ?",
+];
 // Recebendo valor de ação e executando pesquisa, cadastro ou alteração
 switch($action) {
     // Exibir todos os produtos
     case 'exibirTodos':
-        $stmt = $conn->prepare("SELECT * FROM produtos");
+        $condicoesSQL = [];
+        $valoresSQL = [];
+
+        if (!empty(array_filter($filtros))) {
+            foreach (array_filter($filtros) as $chave => $valor) {
+                $condicoesSQL[] = $filtrosSQL[$chave];
+                $valoresSQL[] = $valor;       
+            };
+            $whereSQL = " WHERE " . implode(" AND ", $condicoesSQL);
+            $query = "SELECT * FROM produtos" . $whereSQL . " LIMIT 5 OFFSET ?";
+            $stmt = $conn->prepare($query);
+            $tipos = str_repeat("d", count($valoresSQL)) . "i";
+            $valoresSQL[] = $offset;
+            $stmt->bind_param($tipos, ...$valoresSQL);
+
+            $stmtCount = $conn->prepare("SELECT COUNT(*) as total FROM produtos");
+            $stmtCount->execute();
+            $resultCount = $stmtCount->get_result();
+            $totalProdutos = $resultCount->fetch_assoc()['total'];
+            
+        } else {
+            $stmt = $conn->prepare("SELECT * FROM produtos LIMIT 5 OFFSET ?");
+            $offset = isset($_POST['offset']) ? (int)$_POST['offset'] : 0;
+            $stmt->bind_param("i", $offset);
+
+            $stmtCount = $conn->prepare("SELECT COUNT(*) as total FROM produtos");
+            $stmtCount->execute();
+            $resultCount = $stmtCount->get_result();
+            $totalProdutos = $resultCount->fetch_assoc()['total'];
+            
+        }
+        
+        $stmtCount->close();
         $stmt->execute();
         $result = $stmt->get_result();
         
@@ -74,7 +123,7 @@ switch($action) {
                 'quantidadeProduto' => $row['quantidadeProduto']
             ];
         }
-        echo json_encode($produtos);
+        echo json_encode(["produtos" => $produtos, "totalProdutos" => $totalProdutos]);
         
         $stmt->close();
         exit;
@@ -110,11 +159,13 @@ switch($action) {
     // Cadastrar produto
     case 'cadastrar':
         if (!is_numeric($quantidadeProduto) || $quantidadeProduto < 0) {
-        echo json_encode(["errorCadastro" => "Quantidade inválida."]);
-        exit;
+            header('Content-Type: application/json');
+            echo json_encode(["errorCadastro" => "Quantidade inválida."]);
+            exit;
         }
         
         if (!is_numeric($precoProduto) || $precoProduto < 0) {
+            header('Content-Type: application/json');
             echo json_encode(["errorCadastro" => "Preço inválido."]);
             exit;
         }
@@ -125,7 +176,15 @@ switch($action) {
         } else {
             $stmt = $conn->prepare("INSERT INTO produtos (nomeProduto, quantidadeProduto, categoriaProduto, precoProduto) VALUES (?, ?, ?, ?)");
             $stmt->bind_param("sisd", $nomeProduto, $quantidadeProduto, $categoriaProduto, $precoProduto);
-            if ($stmt->execute()) {
+            try {
+                $stmt->execute();
+            } catch (mysqli_sql_exception $e) {
+                header("Content-Type: application/json");
+                echo json_encode(["errorCadastro" => "Erro ao cadastrar produto: " . $e->getMessage()]);
+                $stmt->close();
+                exit;
+            }
+            if ($stmt->affected_rows > 0) {
                 header("Content-Type: application/json");
                 echo json_encode(["sucessoCadastro" => "Produto cadastrado com sucesso."]);
                 $stmt->close();
@@ -161,7 +220,15 @@ switch($action) {
 
             $stmt = $conn->prepare("UPDATE produtos SET nomeProduto=?, quantidadeProduto=?, categoriaProduto=?, precoProduto=? WHERE produto_ID=?");
             $stmt->bind_param("sisdi", $nomeProduto, $quantidadeProduto, $categoriaProduto, $precoProduto, $produto_ID);
-            if ($stmt->execute()) {
+            try {
+                $stmt->execute();
+            } catch (mysqli_sql_exception $e) {
+                header("Content-Type: application/json");
+                echo json_encode(["errorAlterar" => "Erro ao alterar produto: " . $e->getMessage()]);
+                $stmt->close();
+                exit;
+            }
+            if ($stmt->affected_rows >= 0) {
                 header("Content-Type: application/json");
                 echo json_encode(["sucessoAlterar" => "Produto alterado com sucesso."]);
                 $stmt->close();

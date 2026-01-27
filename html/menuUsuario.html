@@ -52,7 +52,7 @@
 
                             <div id="produto_ID_Div">
                                 <label for="produto_ID_Input">Produto ID:</label>
-                                <input type="number" id="produto_ID_Input" class="Forms" name="produto_ID" placeholder="ID">
+                                <input type="number" id="produto_ID_Input" class="Forms" name="produto_ID" placeholder="ID" min="0">
                             </div>
                             <div>
                                 <label for="nomeProduto">Nome do Produto:</label>
@@ -71,29 +71,61 @@
                             </div>
                             <div id="quantidade_Produto_Div">
                                 <label for="quantidade_Produto_Input">Quantidade:</label>
-                                <input type="number" id="quantidade_Produto_Input" class="Forms" name="quantidadeProduto">
+                                <input type="number" id="quantidade_Produto_Input" class="Forms" name="quantidadeProduto" min="0">
                             </div><br>
                             <input type="submit" id="botaoForms" class="inputForm" value="Consultar Produtos">
                         </form>
 
                         <!--Resultados da pesquisa-->
                         <div id="resultados"><br>
+                            <div id="filtrosContainer">
+                                <h3>Filtros</h3>
+                                <label for="filtroPrecoMinimo">Preço Mínimo:</label>
+                                <input type="text" id="filtroPrecoMinimo" class="Forms" name="filtroPrecoMinimo" placeholder="Preço Mínimo"><br>
+                                <label for="filtroPrecoMaximo">Preço Máximo:</label>
+                                <input type="text" id="filtroPrecoMaximo" class="Forms" name="filtroPrecoMaximo" placeholder="Preço Máximo"><br>
+                                <label for="filtroQuantidadeMenor">Menor que:</label>
+                                <input type="number" id="filtroQuantidadeMenor" class="Forms" name="filtroQuantidadeMenor" placeholder="Quantidade Menor que" min="0"><br>
+                                <label for="filtroQuantidadeMaior">Maior que:</label>
+                                <input type="number" id="filtroQuantidadeMaior" class="Forms" name="filtroQuantidadeMaior" placeholder="Quantidade Maior que" min="0"><br>
+                                <button type="button" id="aplicarFiltros" onclick="aplicarFiltros()">Aplicar Filtros</button>
+                                <button type="reset" id="limparFiltros" onclick="limparFiltros()">Limpar Filtros</button>
+                            </div>
+                            <button id="filtro" type="button" onclick="filtro()" aria-label="Abrir filtros">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="white" class="bi bi-funnel-fill" viewBox="0 0 16 16">
+                                    <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5z"/>
+                                </svg>
+                            </button>
+                            
                             <table>
                                 <tr>
                                     <th class="ID">ID</th>
                                     <th class="Nome">Nome</th>
                                     <th class="Categoria">Categoria</th>
-                                    <th class="Preço">Preço</th>
+                                    <th class="Preco">Preço</th>
                                     <th class="Quantidade">Quantidade</th>
                                 </tr>
                                 <tbody id="resultadosTabela">
                                 </tbody>
                             </table>
+                            <div id="paginacaoContainer">
+                                <button id="btnPrimeira" onclick="primeiraPagina()">&lt;&lt;</button>
+                                <button id="btnAnterior" onclick="anteriorPagina()">&lt;</button>
+                                <span id="paginaAtual">1</span>
+                                <button id="btnProximo" onclick="proximaPagina()">&gt;</button>
+                                <button id="btnUltima" onclick="ultimaPagina()">&gt;&gt;</button>
+                            </div>
                         </div>                  
                     </div>
-                    <div id="graficosContainer">
-                        <!-- Gráficos serao inseridos aqui -->
-                        <!-- Logs serao inseridos aqui-->
+                    <!-- Gráficos serao inseridos aqui -->
+                    <div id="graficosContainer">            
+                         <div id="graficos">
+                            
+                        </div>
+                    </div>
+                    <!-- Logs serao inseridos aqui-->
+                    <div id="logsContainer">
+                        
                     </div>
                 </div>
 

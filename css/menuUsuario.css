@@ -100,17 +100,70 @@
 /* Resultados da pesquisa */
 /* Container dos resultados */
 #resultados {
-    max-height: 400px;
+    max-height: fit-content;
+    max-width: fit-content;
     margin: 20px auto 0;
-    overflow: auto;
+    overflow: visible;
     padding-bottom: 10px;
     text-align: center;
     z-index: 0;
+    position: relative;
 }
 
 #resultados table {
     margin: 0 auto;
     text-align: justify;
+    overflow: auto;
+}
+
+#filtro {
+    padding: 0px;
+    display: block;
+    width: 20px;
+    height: 20px;
+    border: 1px solid black;
+    background-color: var(--cor-principal);
+    color: aliceblue;
+    cursor: pointer;
+    z-index: 2;
+}
+
+#filtro:hover {
+    filter: brightness(0.95);
+}
+
+.iconeFiltro {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+
+.textoFiltro {
+    line-height: 1;
+}
+
+#filtrosContainer {
+    color: aliceblue;
+    text-align: left;
+    display: none;
+    position: absolute;
+    left: -270px;
+    top: 0;
+    width: 250px;
+    background-color: var(--cor-principal);
+    border: 1px solid black;
+    padding: 10px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+#filtrosContainer input {
+    margin-bottom: 10px;
+}
+
+#limparFiltros:hover, #aplicarFiltros:hover {
+    background-color: var(--cor-secundaria);
+    color: black;
 }
 /* Fim dos resultados da pesquisa */
 
@@ -398,6 +451,14 @@ table, th, td {
     border: 1px solid black;
     background-color: var(--cor-secundaria);
     color: var(--preto-texto);
+}
+
+/* Graficos e Logs */
+#graficosContainer {
+    display: none;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    padding: 0px;
 }
 
 /* Fim do menu usuario */

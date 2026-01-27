@@ -34,12 +34,29 @@ let modoCadastro = false;
 let modoAlterar = false;
 let modoExcluir = false;
 
+// Variável global para armazenar produtos
+let produtosRecebidos = [];
+let total = 0;
+
+let offset = 0;
+let paginaAtual = 1;
+const itensPorPagina = 5;
+let totalPaginas = 1
+
 // Set para categorias únicas
 const categoriasUnicas = new Set();
 
-// Limpar tabela
-const tabela = document.getElementById("resultadosTabela");
-tabela.innerHTML = '';
+function parseJsonResponse(response, contexto) {
+    return response.text().then(text => {
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            const label = contexto ? ` (${contexto})` : '';
+            console.error(`Resposta não-JSON${label}:`, text);
+            throw e;
+        }
+    });
+}
 
 // Logout do usuário
 function logout() {
@@ -94,11 +111,11 @@ if (!sessaoUsuario) {
 }
 
 // Função para exibir todas as tabelas ao carregar a página
-
 function exibirTabelas() {
     let loadForm = new FormData();
     loadForm.append('action', 'exibirTodos');
-    fetch('../php/menuUsuario.php', {
+    loadForm.append('offset', offset);
+    return fetch('../php/menuUsuario.php', {
         method: 'POST',
         body: loadForm
     })
@@ -115,8 +132,9 @@ function exibirTabelas() {
             }
         });
     })
-    .then(produtos => {
-        console.log(produtos); 
+    .then(({ produtos, totalProdutos }) => {
+        console.log('Dados recebidos do servidor:', produtos); 
+        console.log('Total de produtos:', totalProdutos);
         
         // Verificar se há erro de autenticação
         if (produtos.erro && produtos.redirect) {
@@ -135,7 +153,6 @@ function exibirTabelas() {
         // Exibir os produtos na página 
         produtos.forEach(p => {
             const tr = document.createElement('tr');
-            const bt = document.createElement('button');
 
             tr.className = 'alterarTabela';
             tr.onclick = function() { alterarTabela(this); };
@@ -182,15 +199,61 @@ function exibirTabelas() {
             categoriaElement.appendChild(option);
         });
         
-        
-        
+        total = totalProdutos;
+        produtosRecebidos = produtos;
+        totalPaginas = totalProdutos ? Math.ceil(totalProdutos / itensPorPagina) : 1;
+        return produtos;
     })
     .catch(error => console.error('Erro:', error));
-
 }
+
+// Paginação
+
+
+function primeiraPagina() {
+    paginaAtual = 1;
+    offset = 0;
+    exibirTabelas();
+}
+
+function proximaPagina() {
+    if (paginaAtual < totalPaginas) {
+        paginaAtual++;
+        offset = (paginaAtual - 1) * itensPorPagina;
+        exibirTabelas();
+    }
+}
+
+function ultimaPagina() {
+    paginaAtual = totalPaginas;
+    offset = (paginaAtual - 1) * itensPorPagina;
+    exibirTabelas();
+}
+
+
+function anteriorPagina() {
+    if (paginaAtual > 1) {
+        paginaAtual--;
+        offset = (paginaAtual - 1) * itensPorPagina;
+        exibirTabelas();
+    }
+}
+
+
+
 
 // Carregar tabela ao abrir a página
 window.addEventListener('load', exibirTabelas);
+
+// Filtrar produtos
+function filtro() {
+    const filtrosContainer = document.getElementById('filtrosContainer');
+    if (filtrosContainer.style.display === 'block') {
+        filtrosContainer.style.display = 'none';
+    } else {
+        filtrosContainer.style.display = 'block';
+    }
+}
 
 //Enviar formulário sem atualizar a página
 function naoEnviar(event) {
@@ -205,7 +268,7 @@ function naoEnviar(event) {
             method: 'POST',
             body: formulario
         })
-        .then(response => response.json())
+        .then(response => parseJsonResponse(response, 'pesquisar'))
         .then(produtos => {
             console.log(produtos); 
             
@@ -257,13 +320,22 @@ function naoEnviar(event) {
             method: 'POST',
             body: formulario
         })
-        .then(response => response.json())
+        .then(response => parseJsonResponse(response, 'cadastrar'))
         .then(data => {
             console.log(data);
             
             if (data.sucessoCadastro) {
-                exibirTabelas();
-                alert(data.sucessoCadastro);
+                document.getElementById("resultadosTabela").innerHTML = '';
+                exibirTabelas().then((produtos) => {
+                    produtos.forEach(p => {
+                        const resultadosTabela = document.getElementById("resultadosTabela");
+                        resultadosTabela.removeChild(resultadosTabela)
+                        
+                    });
+
+                });
+                
+            alert(data.sucessoCadastro);
             } else if (data.errorCadastro) {
                 alert(data.errorCadastro);
             }
@@ -279,7 +351,7 @@ function naoEnviar(event) {
             method: 'POST',
             body: formulario
         })
-        .then(response => response.json())
+        .then(response => parseJsonResponse(response, 'alterar'))
         .then(produtos => {
             console.log(produtos);
             
@@ -300,6 +372,42 @@ function naoEnviar(event) {
 
 //Esconder e alterar os formulários
 document.getElementById('PesquisaForm').style.display = 'none';
+
+// Filtros
+function aplicarFiltros() {
+    let loadForm = new FormData();
+    let parametros = {
+        precoMinimo: document.getElementById('filtroPrecoMinimo').value,
+        precoMaximo: document.getElementById('filtroPrecoMaximo').value,
+        quantidadeMenor: document.getElementById('filtroQuantidadeMenor').value,
+        quantidadeMaior: document.getElementById('filtroQuantidadeMaior').value
+    };  
+    Object.entries(parametros).forEach(([key, value]) => {
+        loadForm.append(key, value);
+    });
+    loadForm.append('action', 'exibirTodos');
+
+    fetch('../php/menuUsuario.php', {
+        method: 'POST',
+        body: loadForm
+    }) 
+    
+    .then(response => response.json())
+    .then(produtos => {
+        console.log(produtos);
+        exibirTabelas()
+    });   
+}
+
+        
+
+function limparFiltros() {
+    exibirTabelas();
+    const filtroContainer = document.querySelectorAll('#filtrosContainer input');
+    filtroContainer.forEach(input => input.value = '');
+}
+
+
 
 //Abrir formulário de pesquisa
 function pesquisar() {
@@ -406,14 +514,37 @@ function cadastroPesquisa() {
 }
 // Graficos e Logs
 function graficos() {
-    const cadastroPesquisaContainer = document.getElementById('cadastroPesquisaContainer');
+    document.getElementById('cadastroPesquisaContainer').style.display = 'none';
+    document.getElementById('graficosContainer').style.display = 'block';
+    document.getElementById('graficosContainer').innerHTML = '';
     const graficosContainer = document.getElementById('graficosContainer');
+    const criarContainerFilho = document.createElement('div');
+    const produtos = produtosRecebidos;
 
-    cadastroPesquisaContainer.style.display = 'none';
-    graficosContainer.style.display = 'block';
+    produtos.forEach(p => {
+        let alturaGrafico = p.precoProduto * 10;
+        let produtoID = p.produto_ID;
+        const criarGrafico = document.createElement('div');
+        const atributosGrafico = {
+            width: '40px',
+            height: alturaGrafico + 'px',
+            border: '1px solid black',
+            margin: '0 5px',
+            display: 'inline-block',
+            backgroundColor: 'var(--cor-principal)'
+        };
+        
+        
+        criarGrafico.setAttribute('id', 'grafico' + p.produto_ID);
+        criarContainerFilho.appendChild(criarGrafico);
+        Object.entries(atributosGrafico).forEach(([chave, valor]) => {
+            criarGrafico.style[chave] = valor;
+        });
+        graficosContainer.appendChild(criarContainerFilho);
+    });
+    
+
 }
-
-
 
 // Função para o menu do usuário
 const usuarioPerfil = document.getElementById('nomeUsuarioPerfil');

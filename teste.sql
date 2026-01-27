@@ -16,7 +16,7 @@ CREATE TABLE produtos(
     nomeProduto varchar(100) NOT NULL UNIQUE,
     categoriaProduto varchar(50) NOT NULL,
     quantidadeProduto int NOT NULL,
-    precoProduto float(5,2) NOT NULL,
+    precoProduto DECIMAL(10,2) NOT NULL,
     PRIMARY KEY (produto_ID)
 );
 
