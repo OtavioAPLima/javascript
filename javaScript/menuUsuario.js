@@ -37,6 +37,7 @@ let modoExcluir = false;
 // Variável global para armazenar produtos
 let produtosRecebidos = [];
 let total = 0;
+let funcao = exibirTabelas;
 
 let offset = 0;
 let paginaAtual = 1;
@@ -213,21 +214,21 @@ function exibirTabelas() {
 function primeiraPagina() {
     paginaAtual = 1;
     offset = 0;
-    exibirTabelas();
+    funcao();
 }
 
 function proximaPagina() {
     if (paginaAtual < totalPaginas) {
         paginaAtual++;
         offset = (paginaAtual - 1) * itensPorPagina;
-        exibirTabelas();
+        funcao();
     }
 }
 
 function ultimaPagina() {
     paginaAtual = totalPaginas;
     offset = (paginaAtual - 1) * itensPorPagina;
-    exibirTabelas();
+    funcao();
 }
 
 
@@ -235,7 +236,7 @@ function anteriorPagina() {
     if (paginaAtual > 1) {
         paginaAtual--;
         offset = (paginaAtual - 1) * itensPorPagina;
-        exibirTabelas();
+        funcao();
     }
 }
 
@@ -272,6 +273,7 @@ function naoEnviar(event) {
             console.log(produtos); 
             
             // Exibir os produtos na página 
+            const tabela = document.getElementById("resultadosTabela");
             tabela.innerHTML = '';
             produtos.forEach(p => {
                 const tr = document.createElement('tr');
@@ -368,6 +370,9 @@ document.getElementById('PesquisaForm').style.display = 'none';
 
 // Filtros
 function aplicarFiltros() {
+    funcao = aplicarFiltros;
+    
+
     let loadForm = new FormData();
     let parametros = {
         filtroPrecoMinimo: document.getElementById('filtroPrecoMinimo').value,
@@ -379,22 +384,80 @@ function aplicarFiltros() {
         loadForm.append(key, value);
     });
     loadForm.append('action', 'exibirTodosFiltros');
+    loadForm.append('offset', offset);
 
     fetch('../php/menuUsuario.php', {
         method: 'POST',
         body: loadForm
     }) 
-    
-    .then(response => response.json())
-    .then(produtos => {
-        console.log(produtos);
-        exibirTabelas();
-    });   
+    .then(response => {
+        return response.text().then(text => {
+            console.log('Resposta do servidor (filtros):', text);
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('Erro ao parsear JSON (filtros):', e);
+                console.error('Texto recebido (filtros):', text);
+                throw e;
+            }
+        });
+    })
+    .then(produtosFiltro => {
+        console.log(produtosFiltro);
+
+        const tabela = document.getElementById("resultadosTabela");
+        tabela.innerHTML = '';
+        const categoriasUnicas = new Set();
+        
+        // Exibir os produtos na página 
+        produtosFiltro.produtos.forEach(p => {
+            const tr = document.createElement('tr');
+
+            tr.className = 'alterarTabela';
+            tr.onclick = function() { alterarTabela(this); };
+
+            tr.dataset.id = p.produto_ID;
+            tr.dataset.nome = p.nomeProduto;
+            tr.dataset.categoria = p.categoriaProduto;
+            tr.dataset.preco = p.precoProduto;
+            tr.dataset.quantidade = p.quantidadeProduto;
+            const tdId = document.createElement('td');
+            tdId.textContent = p.produto_ID;
+            tr.appendChild(tdId);
+
+            const tdNome = document.createElement('td');
+            tdNome.textContent = p.nomeProduto;
+            tr.appendChild(tdNome);
+
+            const tdCategoria = document.createElement('td');
+            tdCategoria.textContent = p.categoriaProduto;
+            tr.appendChild(tdCategoria);
+
+            const tdPreco = document.createElement('td');
+            tdPreco.textContent = `R$ ${p.precoProduto}`;
+            tr.appendChild(tdPreco);
+
+            const tdQuantidade = document.createElement('td');
+            tdQuantidade.textContent = p.quantidadeProduto;
+            tr.appendChild(tdQuantidade);
+
+
+            tabela.appendChild(tr);
+            
+            
+            // Adicionar categoria ao set de categorias únicas
+            categoriasUnicas.add(p.categoriaProduto);
+        });
+    }) 
+    .catch(error => console.error('Erro:', error));  
 }
 
         
 
 function limparFiltros() {
+    funcao = exibirTabelas;
+    paginaAtual = 1;
+    offset = 0;
     exibirTabelas();
     const filtroContainer = document.querySelectorAll('#filtrosContainer input');
     filtroContainer.forEach(input => input.value = '');

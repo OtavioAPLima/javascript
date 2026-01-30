@@ -115,6 +115,63 @@ switch($action) {
         echo json_encode(["produtos" => $produtos, "totalProdutos" => $totalProdutos]);
 
         exit;
+    case 'exibirTodosFiltros':
+        $where = [];
+        $params = [];
+        $tipo = '';
+        if (empty($filtros)) {
+            header('Content-Type: application/json');
+            echo json_encode(["erroFiltros" => "Nenhum filtro fornecido."]);
+            exit;
+
+        };
+        foreach ($filtros as $key => $value) {
+            if (empty($value)) {
+                unset($filtros[$key]);
+                unset($filtrosSQL[$key]);
+            } else {
+                $where[] = $filtrosSQL[$key];
+                $params[] = $value;
+                if (strpos($key, 'Preco') !== false) {
+                    $tipo .= 'd';
+                } else {
+                    $tipo .= 'i';
+                }
+            }
+        }
+        $stmtFiltro = $conn->prepare("SELECT * FROM produtos WHERE " . implode(" AND ", $where) . " LIMIT 5 OFFSET ?");
+        $params[] = $offset;
+        $tipo .= 'i';
+        $stmtFiltro->bind_param($tipo, ...$params);
+        $stmtFiltro->execute();
+        $resultFiltro = $stmtFiltro->get_result();
+
+
+        $produtosFiltro = [];
+        while($row = $resultFiltro->fetch_assoc()) {
+            $produtosFiltro[] = [
+                'produto_ID' => $row['produto_ID'],
+                'nomeProduto' => jsProtection($row['nomeProduto']),
+                'categoriaProduto' => jsProtection($row['categoriaProduto']),
+                'precoProduto' => $row['precoProduto'],
+                'quantidadeProduto' => $row['quantidadeProduto']
+            ];
+        }
+
+        $stmtCountFiltro = $conn->prepare("SELECT COUNT(*) as total FROM produtos WHERE " . implode(" AND ", $where));
+        $tipoCount = substr($tipo, 0, -1); 
+        $paramsCount = array_slice($params, 0, -1);
+        $paramsCount != null ? $stmtCountFiltro->bind_param($tipoCount, ...$paramsCount) : null;
+        $stmtCountFiltro->execute();
+        $resultCountFiltro = $stmtCountFiltro->get_result();
+        $totalProdutos = $resultCountFiltro->fetch_assoc()['total'];
+
+        header('Content-Type: application/json');
+        echo json_encode(["produtos" => $produtosFiltro, "totalProdutos" => $totalProdutos]);
+
+        $stmtFiltro->close();
+        $stmtCountFiltro->close();
+        exit;
     // Pesquisar produtos
     case 'pesquisar':
         if (empty($nomeProduto) && empty($categoriaProduto) && empty($produto_ID) && empty($precoProduto) && empty($quantidadeProduto)) {
